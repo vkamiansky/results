@@ -1,0 +1,9 @@
+configuration: Release
+
+image: Ubuntu
+
+test_script:
+- dotnet test ./src/
+
+build_script:
+- dotnet build ./src/ -v m -c Release
