@@ -272,3 +272,6 @@ __pycache__/
 !.vscode/tasks.json
 
 *.csv
+
+# MacOS 
+.DS_Store
