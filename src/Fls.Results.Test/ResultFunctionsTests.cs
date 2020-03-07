@@ -1,6 +1,7 @@
 using System;
 using Xunit;
 using Moq;
+using System.Threading.Tasks;
 
 namespace Fls.Results.Test
 {
@@ -51,6 +52,46 @@ namespace Fls.Results.Test
                     It.Is<Func<Exception, IOperationResult<int>>>(y => (y(testException) as OperationResult.FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
+            Assert.Equal(expectedResult, actualResult);
+        }
+
+        [Fact]
+        public async void BindAsyncTest()
+        {
+            var expectedResultMock = new Mock<IOperationResult<int>>();
+            var expectedResult = expectedResultMock.Object;
+
+            var sourceMock = new Mock<IOperationResult<int>>();
+            sourceMock.Setup(x =>
+                x.MatchAsync(
+                    It.IsAny<Func<int, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<string, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<Exception, Task<IOperationResult<int>>>>()
+                )).Returns(Task.FromResult(expectedResult));
+
+            var source = sourceMock.Object;
+
+            var actualResult = await sourceMock.Object.BindAsync(
+                // This function is supposed to be passed as the matchSuccess case
+                _ =>
+                {
+                    return Task.FromResult(expectedResult);
+                }
+            );
+
+            var testError = "testError";
+            var testException = new InvalidCastException("test");
+
+            //var actual = await actualResult;
+            // Verify that the right functions have been created by the Bind function and passed to Match
+            sourceMock.Verify(x =>
+                x.MatchAsync(
+                    It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResult),
+                    It.Is<Func<string, Task<IOperationResult<int>>>>(y => ( y(testError).Result as OperationResult.ErrorResult<int>).Message == testError),
+                    It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as OperationResult.FailureResult<int>).Exception == testException)
+                ), Times.Once);
+
+            
             Assert.Equal(expectedResult, actualResult);
         }
     }
