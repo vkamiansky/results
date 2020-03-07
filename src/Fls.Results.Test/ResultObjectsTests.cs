@@ -1,6 +1,7 @@
 using System;
 using Xunit;
 using Moq;
+using System.Threading.Tasks;
 
 namespace Fls.Results.Test
 {
@@ -22,5 +23,23 @@ namespace Fls.Results.Test
             var matchResult = sut.Match(bindSuccess, bindError, bindFailure);
             Assert.Equal(successBound, matchResult);
         }
+
+        [Fact]
+        public async void SuccessMatchAsyncTest()
+        {
+            var testValue = 2;
+            var successBound = new Mock<IOperationResult<float>>().Object;
+            var errorBound = new Mock<IOperationResult<float>>().Object;
+            var failureBound = new Mock<IOperationResult<float>>().Object;
+            Func<int, Task<IOperationResult<float>>> bindSuccess = _ => Task.FromResult(successBound);
+            Func<string, Task<IOperationResult<float>>> bindError = _ => Task.FromResult(errorBound);
+            Func<Exception, Task<IOperationResult<float>>> bindFailure = _ =>  Task.FromResult(failureBound);
+
+            var sut = new OperationResult.SuccessResult<int>(testValue);
+
+            var matchResult = await sut.MatchAsync(bindSuccess, bindError, bindFailure);
+            Assert.Equal(successBound, matchResult);
+        }
+        
     }
 }
