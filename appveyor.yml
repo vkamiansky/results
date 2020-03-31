@@ -8,6 +8,9 @@ test_script:
 build_script:
 - dotnet build ./src/ -v m -c Release
 
+build:
+  publish_nuget: true
+
 deploy:
   provider: NuGet
   api_key:
