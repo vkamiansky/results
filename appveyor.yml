@@ -10,9 +10,7 @@ build_script:
 
 deploy:
   provider: NuGet
-  server:                  # remove to push to NuGet.org
   api_key:
     secure: EBAvPnMs/+UOBs8EEz0DGyOvFXDxkEACjlwcOTvEorxy0we5SHLwfELS+cox2aFw
   skip_symbols: false
-  symbol_server:           # remove to push symbols to SymbolSource.org
   artifact: /.*\.nupkg/
