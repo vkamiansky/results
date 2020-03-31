@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fls.Results", "Fls.Results\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fls.Results.Test", "Fls.Results.Test\Fls.Results.Test.csproj", "{82FABDD5-71DE-4A87-92FB-FC3F418DE4D9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlsResults", "..\build\FlsResults.csproj", "{308E8F04-41D0-4159-B938-ADE0A1BBC207}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{308E8F04-41D0-4159-B938-ADE0A1BBC207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{308E8F04-41D0-4159-B938-ADE0A1BBC207}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{817C2C4D-51B5-4114-ACA9-2411C71B9664}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{817C2C4D-51B5-4114-ACA9-2411C71B9664}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{817C2C4D-51B5-4114-ACA9-2411C71B9664}.Debug|x64.ActiveCfg = Debug|Any CPU
