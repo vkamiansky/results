@@ -11,7 +11,7 @@ build_script:
 - dotnet build ./src/ -v m -c Release
 
 after_build:
-  - dotnet pack Composite --no-build
+  -  dotnet pack ./src/Fls.Results --no-build
 
 artifacts:
 - path: '**\*.nupkg'
