@@ -10,11 +10,18 @@ test_script:
 build_script:
 - dotnet build ./src/ -v m -c Release
 
-build:
-  publish_nuget: true
+after_build:
+  - dotnet pack Composite --no-build
+
+artifacts:
+- path: '**\*.nupkg'
+  name: NuGet
 
 deploy:
-  provider: NuGet
-  api_key: oy2n3sxah4nvfc4lfphquuynozc37bfujjfhjy3bvhmt64
-  skip_symbols: false
-  artifact: /.*\.nupkg/
+- provider: NuGet
+  server: NuGet.org
+  api_key:
+    secure: yTJOXDOWg52hjjJFxtJNqq0uRfi8pHiC2ilKFXsJoDT6XjM13bRgvSyYaf4z9wJe
+  on:
+    branch: master
+    appveyor_repo_tag: true

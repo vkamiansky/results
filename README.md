@@ -5,10 +5,5 @@
 ## Discription
 A C# framework for building railroad-oriented code with results.
 
-## Install from NuGet
-
-```bash
-dotnet add package FlsResults --version 1.0.0
-```
 
 
