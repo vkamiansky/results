@@ -56,7 +56,7 @@ namespace Fls.Results.Test
         }
 
         [Fact]
-        public async void BindAsyncTest_1()
+        public async void BindAsyncTestIOperationResulToFuncTaskIOperationResult()
         {
             var expectedResultMock = new Mock<IOperationResult<int>>();
             var expectedResult = expectedResultMock.Object;
@@ -90,12 +90,11 @@ namespace Fls.Results.Test
                     It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as OperationResult.FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
-            
             Assert.Equal(expectedResult, actualResult);
         }
 
         [Fact]
-        public async void BindAsyncTest_2()
+        public async void BindAsyncTestTaskIOperationResultToFuncTaskIOperationResult()
         {
             var expectedResultMock = new Mock<IOperationResult<int>>();
             var expectedResult = expectedResultMock.Object;
@@ -134,7 +133,7 @@ namespace Fls.Results.Test
         }
         
         [Fact]
-        public async void BindAsyncTest_3()
+        public async void BindAsyncTestTaskIOperationResultToFuncIOperationResult()
         {
             var expectedResultMock = new Mock<IOperationResult<int>>();
             var expectedResult = expectedResultMock.Object;
