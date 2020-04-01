@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
-
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <PackageId>Fls.Results</PackageId>
@@ -16,6 +14,5 @@
     <RepositoryUrl>https://github.com/vkamiansky/results.git</RepositoryUrl>
     <Description>A C# framework for building railroad-oriented code with results.</Description>
     <Copyright>Copyright (c) 2020, FirstLine Net Core Practice Team</Copyright>
-
   </PropertyGroup>
 </Project>
