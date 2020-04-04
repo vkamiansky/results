@@ -90,7 +90,7 @@ class Build : NukeBuild
         });
 
     Target Publish => _ => _
-        .DependsOn(Compile)
+        .DependsOn(Pack)
         .OnlyWhenDynamic(() => IsLocalBuild || AppVeyor.Instance.RepositoryTag,
                          () => AppVeyor.Instance != null && AppVeyor.Instance.RepositoryBranch == "master",
                          () => AppVeyor.Instance != null && !string.IsNullOrWhiteSpace(AppVeyor.Instance.RepositoryTagName))
