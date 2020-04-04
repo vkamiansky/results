@@ -77,7 +77,7 @@ class Build : NukeBuild
         });
 
     Target Pack => _ => _
-        .DependsOn(Compile)
+        .DependsOn(Test)
         .OnlyWhenDynamic(() => IsLocalBuild || AppVeyor.Instance.RepositoryTag)
         .Executes(() =>
         {
@@ -100,4 +100,7 @@ class Build : NukeBuild
                 .SetApiKey(NugetKey)
                 .SetTargetPath(OutputDirectory));
         });
+
+    Target CompleteWorkflow => _ => _
+        .Triggers(Publish);
 }

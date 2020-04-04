@@ -1,5 +1,3 @@
-version: 1.0.{build}
-
 environment:
   NUGET_KEY:
     secure: yTJOXDOWg52hjjJFxtJNqq0uRfi8pHiC2ilKFXsJoDT6XjM13bRgvSyYaf4z9wJe
@@ -9,11 +7,5 @@ image: Ubuntu
 before_build:
 - chmod +x ./build.sh
 
-test_script:
-- ./build.sh --target test
-
 build_script:
-- ./build.sh --target compile --configuration release
-
-deploy_script:
-- ./build.sh --target publish --nuget-key $env:NUGET_KEY
+- ./build.sh --target complete-workflow --nuget-key $env:NUGET_KEY
