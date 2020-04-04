@@ -7,7 +7,7 @@ namespace Fls.Results
     {
         IOperationResult<TOut> Match<TOut>(
             Func<T, IOperationResult<TOut>> bindSuccess,
-            Func<string, IOperationResult<TOut>> bindError,
+            Func<int?, string, IOperationResult<TOut>> bindError,
             Func<Exception, IOperationResult<TOut>> bindFailure);
 
         Task<IOperationResult<TOut>> MatchAsync<TOut>(

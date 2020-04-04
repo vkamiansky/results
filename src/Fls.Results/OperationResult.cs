@@ -15,7 +15,7 @@ namespace Fls.Results
 
             public IOperationResult<TOut> Match<TOut>(
                 Func<T, IOperationResult<TOut>> bindSuccess,
-                Func<string, IOperationResult<TOut>> bindError,
+                Func<int?, string, IOperationResult<TOut>> bindError,
                 Func<Exception, IOperationResult<TOut>> bindFailure)
             {
                 return bindSuccess(Value);
@@ -33,17 +33,18 @@ namespace Fls.Results
         public sealed class ErrorResult<T> : IOperationResult<T>
         {
             public string Message { get; private set; }
-            public ErrorResult(string message)
+            public int? Code { get; private set; }
+            public ErrorResult(string message, int? code = null)
             {
                 Message = message;
             }
 
             public IOperationResult<TOut> Match<TOut>(
                 Func<T, IOperationResult<TOut>> bindSuccess,
-                Func<string, IOperationResult<TOut>> bindError,
+                Func<int?, string, IOperationResult<TOut>> bindError,
                 Func<Exception, IOperationResult<TOut>> bindFailure)
             {
-                return bindError(Message);
+                return bindError(Code, Message);
             }
 
             public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
@@ -65,7 +66,7 @@ namespace Fls.Results
 
             public IOperationResult<TOut> Match<TOut>(
                 Func<T, IOperationResult<TOut>> bindSuccess,
-                Func<string, IOperationResult<TOut>> bindError,
+                Func<int?, string, IOperationResult<TOut>> bindError,
                 Func<Exception, IOperationResult<TOut>> bindFailure)
             {
                 return bindFailure(Exception);
@@ -99,8 +100,26 @@ namespace Fls.Results
         {
             return source.Match(
                 value => bind(value),
-                error => Error<TOut>(error),
+                (_, error) => Error<TOut>(error),
                 exception => Failure<TOut>(exception)
+            );
+        }
+
+        public static IOperationResult<T> BindError<T>(this IOperationResult<T> source, Func<int?, string, IOperationResult<T>> bind, Func<Exception, string> getErrorMessage,  int? exceptionCode = null)
+        {
+            return source.Match(
+                _ => source,
+                (code, error) => bind(code, error),
+                failure => bind(exceptionCode, getErrorMessage(failure))
+            );
+        }
+
+        public static IOperationResult<T> BindError<T>(this IOperationResult<T> source, Func<string, IOperationResult<T>> bind, Func<Exception, string> getMessage)
+        {
+            return source.Match(
+                _ => source,
+                (_, error) => bind(error),
+                failure => bind(getMessage(failure))
             );
         }
 

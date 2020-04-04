@@ -15,7 +15,8 @@ namespace Fls.Results.Test
             var errorBound = new Mock<IOperationResult<float>>().Object;
             var failureBound = new Mock<IOperationResult<float>>().Object;
             Func<int, IOperationResult<float>> bindSuccess = _ => successBound;
-            Func<string, IOperationResult<float>> bindError = _ => errorBound;
+            int? a = null;
+            Func<int?, string, IOperationResult<float>> bindError = (a, _) => errorBound;
             Func<Exception, IOperationResult<float>> bindFailure = _ => failureBound;
 
             var sut = new OperationResult.SuccessResult<int>(testValue);
@@ -32,7 +33,8 @@ namespace Fls.Results.Test
              var errorBound = new Mock<IOperationResult<float>>().Object;
              var failureBound = new Mock<IOperationResult<float>>().Object;
              Func<int, IOperationResult<float>> bindSuccess = _ => successBound;
-             Func<string, IOperationResult<float>> bindError = _ => errorBound;
+             int? a = null;
+             Func<int?, string, IOperationResult<float>> bindError = (a, _) => errorBound;
              Func<Exception, IOperationResult<float>> bindFailure = _ => failureBound;
 
              var sut = new OperationResult.ErrorResult<int>(testValue);
@@ -49,7 +51,8 @@ namespace Fls.Results.Test
              var errorBound = new Mock<IOperationResult<float>>().Object;
              var failureBound = new Mock<IOperationResult<float>>().Object;
              Func<int, IOperationResult<float>> bindSuccess = _ => successBound;
-             Func<string, IOperationResult<float>> bindError = _ => errorBound;
+             int? a = null;
+             Func<int?, string, IOperationResult<float>> bindError = (a, _) => errorBound;
              Func<Exception, IOperationResult<float>> bindFailure = _ => failureBound;
 
              var sut = new OperationResult.FailureResult<int>(testValue);
