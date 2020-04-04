@@ -5,7 +5,6 @@
     <IncludeSource>true</IncludeSource>
     <PackageId>Fls.Results</PackageId>
     <Title>Fls.Results</Title>
-    <Version>$(APPVEYOR_BUILD_VERSION)</Version>
     <Authors>FirstLine Software .Net Core Practice Team</Authors>
     <Company>FirstLine Software</Company>
     <license>https://raw.githubusercontent.com/vkamiansky/results/master/LICENSE</license>
