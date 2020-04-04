@@ -6,11 +6,14 @@ environment:
 
 image: Ubuntu
 
+before_build:
+- chmod +x ./build.sh
+
 test_script:
-- sh ./build.sh --target test
+- ./build.sh --target test
 
 build_script:
-- sh ./build.sh --target compile --configuration release
+- ./build.sh --target compile --configuration release
 
 deploy_script:
-- sh ./build.sh --target publish --nuget-key $env:NUGET_KEY
+- ./build.sh --target publish --nuget-key $env:NUGET_KEY
