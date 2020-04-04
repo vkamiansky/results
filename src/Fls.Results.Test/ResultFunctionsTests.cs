@@ -44,12 +44,12 @@ namespace Fls.Results.Test
             var testException = new InvalidCastException("test");
 
             // Verify that the right functions have been created by the Bind function and passed to Match
-            //sourceMock.Verify(x =>
-            //    x.Match(
-             //       It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResult),
-             //       It.Is<Func<int?, string, IOperationResult<int>>>((_, y) => (y(testError, null) as OperationResult.ErrorResult<int>).Message == testError),
-             //       It.Is<Func<Exception, IOperationResult<int>>>(y => (y(testException) as OperationResult.FailureResult<int>).Exception == testException)
-            //    ), Times.Once);
+            sourceMock.Verify(x =>
+                x.Match(
+                    It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResult),
+                    It.Is<Func<int?, string, IOperationResult<int>>>(y => (y(null, testError) as OperationResult.ErrorResult<int>).Message == testError),
+                    It.Is<Func<Exception, IOperationResult<int>>>(y => (y(testException) as OperationResult.FailureResult<int>).Exception == testException)
+                ), Times.Once);
 
             Assert.Equal(expectedResult, actualResult);
         }
