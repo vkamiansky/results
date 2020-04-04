@@ -7,10 +7,10 @@ environment:
 image: Ubuntu
 
 test_script:
-- ./build.ps1 --target test
+- sudo ./build.ps1 --target test
 
 build_script:
-- ./build.ps1 --target compile --configuration release
+- sudo ./build.ps1 --target compile --configuration release
 
 deploy_script:
-- ./build.ps1 --target publish --nuget-key $env:NUGET_KEY
+- sudo ./build.ps1 --target publish --nuget-key $env:NUGET_KEY
