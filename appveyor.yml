@@ -7,10 +7,10 @@ environment:
 image: Ubuntu
 
 test_script:
-- sudo ./build.sh --target test
+- sh ./build.sh --target test
 
 build_script:
-- sudo ./build.sh --target compile --configuration release
+- sh ./build.sh --target compile --configuration release
 
 deploy_script:
-- sudo ./build.sh --target publish --nuget-key $env:NUGET_KEY
+- sh ./build.sh --target publish --nuget-key $env:NUGET_KEY
