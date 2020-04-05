@@ -1,27 +1,11 @@
-version: 1.0.{build}
-
-configuration: Release
+environment:
+  NUGET_KEY:
+    secure: yTJOXDOWg52hjjJFxtJNqq0uRfi8pHiC2ilKFXsJoDT6XjM13bRgvSyYaf4z9wJe
 
 image: Ubuntu
 
-test_script:
-- dotnet test ./src/
+before_build:
+- chmod +x ./build.sh
 
 build_script:
-- dotnet build ./src/ -v m -c Release
-
-after_build:
-  -  dotnet pack ./src/Fls.Results --no-build
-
-artifacts:
-- path: '**\*.nupkg'
-  name: NuGet
-
-deploy:
-- provider: NuGet
-  server: NuGet.org
-  api_key:
-    secure: yTJOXDOWg52hjjJFxtJNqq0uRfi8pHiC2ilKFXsJoDT6XjM13bRgvSyYaf4z9wJe
-  on:
-    branch: master
-    appveyor_repo_tag: true
+- ./build.sh --target complete-workflow --nuget-key $env:NUGET_KEY
