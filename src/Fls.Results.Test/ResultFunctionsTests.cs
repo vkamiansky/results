@@ -65,7 +65,7 @@ namespace Fls.Results.Test
             sourceMock.Setup(x =>
                 x.MatchAsync(
                     It.IsAny<Func<int, Task<IOperationResult<int>>>>(),
-                    It.IsAny<Func<string, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<int?, string, Task<IOperationResult<int>>>>(),
                     It.IsAny<Func<Exception, Task<IOperationResult<int>>>>()
                 )).Returns(Task.FromResult(expectedResult));
 
@@ -86,7 +86,7 @@ namespace Fls.Results.Test
             sourceMock.Verify(x =>
                 x.MatchAsync(
                     It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResult),
-                    It.Is<Func<string, Task<IOperationResult<int>>>>(y => ( y(testError).Result as OperationResult.ErrorResult<int>).Message == testError),
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => ( y(null, testError).Result as OperationResult.ErrorResult<int>).Message == testError),
                     It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as OperationResult.FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
@@ -103,7 +103,7 @@ namespace Fls.Results.Test
             sourceMock.Setup(x =>
                 x.MatchAsync(
                     It.IsAny<Func<int, Task<IOperationResult<int>>>>(),
-                    It.IsAny<Func<string, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<int?, string, Task<IOperationResult<int>>>>(),
                     It.IsAny<Func<Exception, Task<IOperationResult<int>>>>()
                 )).Returns(Task.FromResult(expectedResult));
 
@@ -124,7 +124,7 @@ namespace Fls.Results.Test
             sourceMock.Verify(x =>
                 x.MatchAsync(
                     It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResult),
-                    It.Is<Func<string, Task<IOperationResult<int>>>>(y => ( y(testError).Result as OperationResult.ErrorResult<int>).Message == testError),
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => ( y(null, testError).Result as OperationResult.ErrorResult<int>).Message == testError),
                     It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as OperationResult.FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
