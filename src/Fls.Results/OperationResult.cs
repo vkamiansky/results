@@ -105,21 +105,21 @@ namespace Fls.Results
             );
         }
 
-        public static IOperationResult<T> BindError<T>(this IOperationResult<T> source, Func<int?, string, IOperationResult<T>> bind, Func<Exception, string> getErrorMessage,  int? exceptionCode = null)
-        {
-            return source.Match(
-                _ => source,
-                (code, error) => bind(code, error),
-                failure => bind(exceptionCode, getErrorMessage(failure))
-            );
-        }
-
         public static IOperationResult<T> BindError<T>(this IOperationResult<T> source, Func<string, IOperationResult<T>> bind, Func<Exception, string> getMessage)
         {
             return source.Match(
                 _ => source,
                 (_, error) => bind(error),
                 failure => bind(getMessage(failure))
+            );
+        }
+
+        public static IOperationResult<T> BindError<T>(this IOperationResult<T> source, Func<int?, string, IOperationResult<T>> bind, Func<Exception, string> getErrorMessage,  int? exceptionCode = null)
+        {
+            return source.Match(
+                _ => source,
+                (code, error) => bind(code, error),
+                failure => bind(exceptionCode, getErrorMessage(failure))
             );
         }
 
@@ -140,6 +140,16 @@ namespace Fls.Results
         public static async Task<IOperationResult<TOut>> BindAsync<TIn, TOut>(this Task<IOperationResult<TIn>> source, Func<TIn, IOperationResult<TOut>> bind)
         {
             return (await source).Bind(bind);
+        }
+
+        public static async Task<IOperationResult<T>> BindErrorAsync<T>(this Task<IOperationResult<T>> source, Func<string, IOperationResult<T>> bind, Func<Exception, string> getMessage)
+        {
+            return (await source).BindError(bind, getMessage);
+        }
+        
+        public static async Task<IOperationResult<T>> BindErrorAsync<T>(this Task<IOperationResult<T>> source, Func<int?, string, IOperationResult<T>> bind, Func<Exception, string> getMessage, int? exceptionCode = null)
+        {
+            return (await source).BindError(bind, getMessage, exceptionCode);
         }
     }
 }
