@@ -14,5 +14,6 @@
     <RepositoryUrl>https://github.com/vkamiansky/results.git</RepositoryUrl>
     <Description>A C# framework for building railroad-oriented code with results.</Description>
     <Copyright>Copyright (c) 2020, FirstLine Software .Net Core Practice Team</Copyright>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 </Project>
