@@ -70,7 +70,6 @@ namespace Fls.Results.Test
             var expectedResultOther= new Mock<IOperationResult<int>>().Object;
 
             var actualResult = sourceMock.Object.BindError(
-                // This function is supposed to be passed as the matchSuccess case
                 _ =>
                 {
                     return expectedResultOther;
@@ -82,7 +81,6 @@ namespace Fls.Results.Test
                 }
             );
 
-            // Verify that the right functions have been created by the Bind function and passed to Match
             sourceMock.Verify(x =>
                 x.Match(
                     It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResultSuccess),
@@ -108,7 +106,6 @@ namespace Fls.Results.Test
             var expectedResultOther= new Mock<IOperationResult<int>>().Object;
 
             var actualResult = sourceMock.Object.BindError(
-                // This function is supposed to be passed as the matchSuccess case
                 (code, str)  =>
                 {
                     return expectedResultOther;
@@ -118,11 +115,10 @@ namespace Fls.Results.Test
                 {
                     return default(string);
                 },
-                
+
                 default(int?)
             );
 
-            // Verify that the right functions have been created by the Bind function and passed to Match
             sourceMock.Verify(x =>
                 x.Match(
                     It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResultSuccess),
@@ -247,6 +243,236 @@ namespace Fls.Results.Test
 
             
             Assert.Equal(expectedResult, actualResult);
-        }           
-    }
+        }  
+
+
+        [Fact]
+        public async void BindErrorAsyncTestWithoutErrorCodeTaskIOperationResultFuncIOperationResult()
+        {
+            var sourceMock = new Mock<IOperationResult<int>>();
+            sourceMock.Setup(x =>
+                x.Match(
+                    It.IsAny<Func<int, IOperationResult<int>>>(),
+                    It.IsAny<Func<int?, string, IOperationResult<int>>>(),
+                    It.IsAny<Func<Exception, IOperationResult<int>>>()
+                )).Returns(sourceMock.Object);
+
+            var expectedResultSuccess = sourceMock.Object;
+            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+
+            var source = Task.FromResult(sourceMock.Object);
+            var actualResult = await source.BindErrorAsync(
+                _ =>
+                {
+                    return expectedResultOther;
+                },
+
+                _ =>
+                {
+                    return default(string);
+                }
+            );
+
+            sourceMock.Verify(x =>
+                x.Match(
+                    It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResultSuccess),
+                    It.Is<Func<int?, string, IOperationResult<int>>>(y => y(default(int), default(string)) == expectedResultOther),
+                    It.Is<Func<Exception, IOperationResult<int>>>(y => y(default(Exception)) == expectedResultOther)
+                ), Times.Once);
+
+            Assert.Equal(expectedResultSuccess, actualResult);
+        }   
+
+        [Fact]
+        public async void BindErrorAsyncTestWithoutErrorCodeIOperationResultFuncIOperationResult()
+        {
+            var sourceMock = new Mock<IOperationResult<int>>();
+            sourceMock.Setup(x =>
+                x.MatchAsync(
+                    It.IsAny<Func<int, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<int?, string, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<Exception, Task<IOperationResult<int>>>>()
+                )).Returns(Task.FromResult(sourceMock.Object));
+
+            var expectedResultSuccess = sourceMock.Object;
+            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+
+            var source = sourceMock.Object;
+            var actualResult = await source.BindErrorAsync(
+                _ =>
+                {
+                    return Task.FromResult(expectedResultOther);
+                },
+
+                _ =>
+                {
+                    return default(string);
+                }
+            );
+
+            sourceMock.Verify(x =>
+                x.MatchAsync(
+                    It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResultSuccess),
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => y(default(int), default(string)).Result == expectedResultOther),
+                    It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => y(default(Exception)).Result == expectedResultOther)
+                ), Times.Once);
+
+            Assert.Equal(expectedResultSuccess, actualResult);
+        }   
+
+        [Fact]
+        public async void BindErrorAsyncTestWithoutErrorCodeTaskIOperationResultFuncTaskIOperationResult()
+        {
+            var sourceMock = new Mock<IOperationResult<int>>();
+            sourceMock.Setup(x =>
+                x.MatchAsync(
+                    It.IsAny<Func<int, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<int?, string, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<Exception, Task<IOperationResult<int>>>>()
+                )).Returns(Task.FromResult(sourceMock.Object));
+
+            var expectedResultSuccess = sourceMock.Object;
+            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+
+            var source = Task.FromResult(sourceMock.Object);
+            var actualResult = await source.BindErrorAsync(
+                _ =>
+                {
+                    return Task.FromResult(expectedResultOther);
+                },
+
+                _ =>
+                {
+                    return default(string);
+                }
+            );
+
+            sourceMock.Verify(x =>
+                x.MatchAsync(
+                    It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResultSuccess),
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => y(default(int), default(string)).Result == expectedResultOther),
+                    It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => y(default(Exception)).Result == expectedResultOther)
+                ), Times.Once);
+
+            Assert.Equal(expectedResultSuccess, actualResult);
+        } 
+
+        [Fact]
+        public async void BindErrorAsyncTestWithErrorCodeTaskIOperationResultFuncIOperationResult()
+        {
+            var sourceMock = new Mock<IOperationResult<int>>();
+            sourceMock.Setup(x =>
+                x.Match(
+                    It.IsAny<Func<int, IOperationResult<int>>>(),
+                    It.IsAny<Func<int?, string, IOperationResult<int>>>(),
+                    It.IsAny<Func<Exception, IOperationResult<int>>>()
+                )).Returns(sourceMock.Object);
+
+            var expectedResultSuccess = sourceMock.Object;
+            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+
+            var source = Task.FromResult(sourceMock.Object);
+            var actualResult = await source.BindErrorAsync(
+                (code, str) =>
+                {
+                    return expectedResultOther;
+                },
+
+                _ =>
+                {
+                    return default(string);
+                },
+
+                default(int?)
+            );
+
+            sourceMock.Verify(x =>
+                x.Match(
+                    It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResultSuccess),
+                    It.Is<Func<int?, string, IOperationResult<int>>>(y => y(default(int), default(string)) == expectedResultOther),
+                    It.Is<Func<Exception, IOperationResult<int>>>(y => y(default(Exception)) == expectedResultOther)
+                ), Times.Once);
+
+            Assert.Equal(expectedResultSuccess, actualResult);
+        }   
+
+        [Fact]
+        public async void BindErrorAsyncTestWithErrorCodeIOperationResultFuncIOperationResult()
+        {
+            var sourceMock = new Mock<IOperationResult<int>>();
+            sourceMock.Setup(x =>
+                x.MatchAsync(
+                    It.IsAny<Func<int, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<int?, string, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<Exception, Task<IOperationResult<int>>>>()
+                )).Returns(Task.FromResult(sourceMock.Object));
+
+            var expectedResultSuccess = sourceMock.Object;
+            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+
+            var source = sourceMock.Object;
+            var actualResult = await source.BindErrorAsync(
+                (code, str) =>
+                {
+                    return Task.FromResult(expectedResultOther);
+                },
+
+                _ =>
+                {
+                    return default(string);
+                },
+
+                default(int?)
+            );
+
+            sourceMock.Verify(x =>
+                x.MatchAsync(
+                    It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResultSuccess),
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => y(default(int), default(string)).Result == expectedResultOther),
+                    It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => y(default(Exception)).Result == expectedResultOther)
+                ), Times.Once);
+
+            Assert.Equal(expectedResultSuccess, actualResult);
+        }   
+
+        [Fact]
+        public async void BindErrorAsyncTestWithErrorCodeTaskIOperationResultFuncTaskIOperationResult()
+        {
+            var sourceMock = new Mock<IOperationResult<int>>();
+            sourceMock.Setup(x =>
+                x.MatchAsync(
+                    It.IsAny<Func<int, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<int?, string, Task<IOperationResult<int>>>>(),
+                    It.IsAny<Func<Exception, Task<IOperationResult<int>>>>()
+                )).Returns(Task.FromResult(sourceMock.Object));
+
+            var expectedResultSuccess = sourceMock.Object;
+            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+
+            var source = Task.FromResult(sourceMock.Object);
+            var actualResult = await source.BindErrorAsync(
+                (code, str) =>
+                {
+                    return Task.FromResult(expectedResultOther);
+                },
+
+                _ =>
+                {
+                    return default(string);
+                },
+
+                default(int?)
+            );
+
+            sourceMock.Verify(x =>
+                x.MatchAsync(
+                    It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResultSuccess),
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => y(default(int), default(string)).Result == expectedResultOther),
+                    It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => y(default(Exception)).Result == expectedResultOther)
+                ), Times.Once);
+
+            Assert.Equal(expectedResultSuccess, actualResult);
+        }        
+          
+    }    
 }
