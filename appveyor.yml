@@ -1,9 +1,11 @@
-configuration: Release
+environment:
+  NUGET_KEY:
+    secure: yTJOXDOWg52hjjJFxtJNqq0uRfi8pHiC2ilKFXsJoDT6XjM13bRgvSyYaf4z9wJe
 
 image: Ubuntu
 
-test_script:
-- dotnet test ./src/
+before_build:
+- chmod +x ./build.sh
 
 build_script:
-- dotnet build ./src/ -v m -c Release
+- ./build.sh --target complete-workflow --nuget-key $env:NUGET_KEY

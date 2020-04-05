@@ -275,3 +275,7 @@ __pycache__/
 
 # MacOS 
 .DS_Store
+
+# Nuke build
+.editorconfig
+*.csproj.DotSettings
