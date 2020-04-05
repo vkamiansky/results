@@ -56,6 +56,84 @@ namespace Fls.Results.Test
         }
 
         [Fact]
+        public void BindErrorTestWithoutErrorCode()
+        {
+            var sourceMock = new Mock<IOperationResult<int>>();
+            sourceMock.Setup(x =>
+                x.Match(
+                    It.IsAny<Func<int, IOperationResult<int>>>(),
+                    It.IsAny<Func<int?, string, IOperationResult<int>>>(),
+                    It.IsAny<Func<Exception, IOperationResult<int>>>()
+                )).Returns(sourceMock.Object);
+
+            var expectedResultSuccess = sourceMock.Object;
+            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+
+            var actualResult = sourceMock.Object.BindError(
+                // This function is supposed to be passed as the matchSuccess case
+                _ =>
+                {
+                    return expectedResultOther;
+                },
+
+                _ =>
+                {
+                    return default(string);
+                }
+            );
+
+            // Verify that the right functions have been created by the Bind function and passed to Match
+            sourceMock.Verify(x =>
+                x.Match(
+                    It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResultSuccess),
+                    It.Is<Func<int?, string, IOperationResult<int>>>(y => y(default(int), default(string)) == expectedResultOther),
+                    It.Is<Func<Exception, IOperationResult<int>>>(y => y(default(Exception)) == expectedResultOther)
+                ), Times.Once);
+
+            Assert.Equal(expectedResultSuccess, actualResult);
+        }
+
+        [Fact]
+        public void BindErrorTestWithErrorCode()
+        {
+            var sourceMock = new Mock<IOperationResult<int>>();
+            sourceMock.Setup(x =>
+                x.Match(
+                    It.IsAny<Func<int, IOperationResult<int>>>(),
+                    It.IsAny<Func<int?, string, IOperationResult<int>>>(),
+                    It.IsAny<Func<Exception, IOperationResult<int>>>()
+                )).Returns(sourceMock.Object);
+
+            var expectedResultSuccess = sourceMock.Object;
+            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+
+            var actualResult = sourceMock.Object.BindError(
+                // This function is supposed to be passed as the matchSuccess case
+                (code, str)  =>
+                {
+                    return expectedResultOther;
+                },
+
+                _ =>
+                {
+                    return default(string);
+                },
+                
+                default(int?)
+            );
+
+            // Verify that the right functions have been created by the Bind function and passed to Match
+            sourceMock.Verify(x =>
+                x.Match(
+                    It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResultSuccess),
+                    It.Is<Func<int?, string, IOperationResult<int>>>(y => y(default(int), default(string)) == expectedResultOther),
+                    It.Is<Func<Exception, IOperationResult<int>>>(y => y(default(Exception)) == expectedResultOther)
+                ), Times.Once);
+
+            Assert.Equal(expectedResultSuccess, actualResult);
+        }
+
+        [Fact]
         public async void BindAsyncTestIOperationResulToFuncTaskIOperationResult()
         {
             var expectedResultMock = new Mock<IOperationResult<int>>();
