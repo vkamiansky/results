@@ -107,11 +107,7 @@ namespace Fls.Results
 
         public static IOperationResult<T> BindError<T>(this IOperationResult<T> source, Func<string, IOperationResult<T>> bind, Func<Exception, string> getMessage)
         {
-            return source.Match(
-                _ => source,
-                (_, error) => bind(error),
-                failure => bind(getMessage(failure))
-            );
+            return source.BindError((_, error) => bind(error), getMessage);
         }
 
         public static IOperationResult<T> BindError<T>(this IOperationResult<T> source, Func<int?, string, IOperationResult<T>> bind, Func<Exception, string> getErrorMessage,  int? exceptionCode = null)
@@ -149,11 +145,7 @@ namespace Fls.Results
         
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this IOperationResult<T> source, Func<string, Task<IOperationResult<T>>> bind, Func<Exception, string> getMessage)
         {
-            return await source.MatchAsync(
-                _ => Task.FromResult(source),
-                async (_, error) => await bind(error),
-                async failure => await bind(getMessage(failure))
-            );
+            return await source.BindErrorAsync((_, error) => bind(error), getMessage);
         }
 
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this Task<IOperationResult<T>> source, Func<string, Task<IOperationResult<T>>> bind, Func<Exception, string> getMessage)
