@@ -202,7 +202,6 @@ namespace Fls.Results.Test
                     It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as OperationResult.FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
-            
             Assert.Equal(expectedResult, actualResult);
         }
         
@@ -241,7 +240,6 @@ namespace Fls.Results.Test
                     It.Is<Func<Exception, IOperationResult<int>>>(y => (y(testException) as OperationResult.FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
-            
             Assert.Equal(expectedResult, actualResult);
         }  
 
@@ -472,7 +470,6 @@ namespace Fls.Results.Test
                 ), Times.Once);
 
             Assert.Equal(expectedResultSuccess, actualResult);
-        }        
-          
+        }             
     }    
 }

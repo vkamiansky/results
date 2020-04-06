@@ -171,6 +171,5 @@ namespace Fls.Results
         {
             return await (await source).BindErrorAsync(bind, getMessage, exceptionCode);
         }
-
     }
 }
