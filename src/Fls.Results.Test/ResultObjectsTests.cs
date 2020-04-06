@@ -57,7 +57,7 @@ namespace Fls.Results.Test
             var matchResult = sut.Match(bindSuccess, bindError, bindFailure);
             Assert.Equal(failureBound, matchResult);
         }
-      
+
         [Fact]
         public async void SuccessMatchAsyncTest()
         {
@@ -67,13 +67,13 @@ namespace Fls.Results.Test
             var failureBound = new Mock<IOperationResult<float>>().Object;
             Func<int, Task<IOperationResult<float>>> bindSuccess = _ => Task.FromResult(successBound);
             Func<int?, string, Task<IOperationResult<float>>> bindError = (_, str) => Task.FromResult(errorBound);
-            Func<Exception, Task<IOperationResult<float>>> bindFailure = _ =>  Task.FromResult(failureBound);
+            Func<Exception, Task<IOperationResult<float>>> bindFailure = _ => Task.FromResult(failureBound);
 
             var sut = new OperationResult.SuccessResult<int>(testValue);
 
             var matchResult = await sut.MatchAsync(bindSuccess, bindError, bindFailure);
             Assert.Equal(successBound, matchResult);
-        }  
+        }
 
         [Fact]
         public async void ErrorMatchAsyncTest()
@@ -84,13 +84,13 @@ namespace Fls.Results.Test
             var failureBound = new Mock<IOperationResult<float>>().Object;
             Func<int, Task<IOperationResult<float>>> bindSuccess = _ => Task.FromResult(successBound);
             Func<int?, string, Task<IOperationResult<float>>> bindError = (_, str) => Task.FromResult(errorBound);
-            Func<Exception, Task<IOperationResult<float>>> bindFailure = _ =>  Task.FromResult(failureBound);
+            Func<Exception, Task<IOperationResult<float>>> bindFailure = _ => Task.FromResult(failureBound);
 
             var sut = new OperationResult.ErrorResult<int>(testValue);
 
             var matchResult = await sut.MatchAsync(bindSuccess, bindError, bindFailure);
             Assert.Equal(errorBound, matchResult);
-        }  
+        }
 
         [Fact]
         public async void FailureMatchAsyncTest()
@@ -101,12 +101,12 @@ namespace Fls.Results.Test
             var failureBound = new Mock<IOperationResult<float>>().Object;
             Func<int, Task<IOperationResult<float>>> bindSuccess = _ => Task.FromResult(successBound);
             Func<int?, string, Task<IOperationResult<float>>> bindError = (_, str) => Task.FromResult(errorBound);
-            Func<Exception, Task<IOperationResult<float>>> bindFailure = _ =>  Task.FromResult(failureBound);
+            Func<Exception, Task<IOperationResult<float>>> bindFailure = _ => Task.FromResult(failureBound);
 
             var sut = new OperationResult.FailureResult<int>(testValue);
 
             var matchResult = await sut.MatchAsync(bindSuccess, bindError, bindFailure);
             Assert.Equal(failureBound, matchResult);
         }
-    } 
+    }
 }

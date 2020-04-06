@@ -110,7 +110,7 @@ namespace Fls.Results
             return source.BindError((_, error) => bind(error), getMessage);
         }
 
-        public static IOperationResult<T> BindError<T>(this IOperationResult<T> source, Func<int?, string, IOperationResult<T>> bind, Func<Exception, string> getErrorMessage,  int? exceptionCode = null)
+        public static IOperationResult<T> BindError<T>(this IOperationResult<T> source, Func<int?, string, IOperationResult<T>> bind, Func<Exception, string> getErrorMessage, int? exceptionCode = null)
         {
             return source.Match(
                 _ => source,
@@ -142,7 +142,7 @@ namespace Fls.Results
         {
             return (await source).BindError(bind, getMessage);
         }
-        
+
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this IOperationResult<T> source, Func<string, Task<IOperationResult<T>>> bind, Func<Exception, string> getMessage)
         {
             return await source.BindErrorAsync((_, error) => bind(error), getMessage);

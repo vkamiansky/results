@@ -67,7 +67,7 @@ namespace Fls.Results.Test
                 )).Returns(sourceMock.Object);
 
             var expectedResultSuccess = sourceMock.Object;
-            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+            var expectedResultOther = new Mock<IOperationResult<int>>().Object;
 
             var actualResult = sourceMock.Object.BindError(
                 _ =>
@@ -103,10 +103,10 @@ namespace Fls.Results.Test
                 )).Returns(sourceMock.Object);
 
             var expectedResultSuccess = sourceMock.Object;
-            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+            var expectedResultOther = new Mock<IOperationResult<int>>().Object;
 
             var actualResult = sourceMock.Object.BindError(
-                (code, str)  =>
+                (code, str) =>
                 {
                     return expectedResultOther;
                 },
@@ -160,7 +160,7 @@ namespace Fls.Results.Test
             sourceMock.Verify(x =>
                 x.MatchAsync(
                     It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResult),
-                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => ( y(null, testError).Result as OperationResult.ErrorResult<int>).Message == testError),
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => (y(null, testError).Result as OperationResult.ErrorResult<int>).Message == testError),
                     It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as OperationResult.FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
@@ -183,7 +183,7 @@ namespace Fls.Results.Test
 
             var source = Task.FromResult(sourceMock.Object);
 
-            var actualResult = await source. BindAsync(
+            var actualResult = await source.BindAsync(
                 // This function is supposed to be passed as the matchSuccess case
                 _ =>
                 {
@@ -198,13 +198,13 @@ namespace Fls.Results.Test
             sourceMock.Verify(x =>
                 x.MatchAsync(
                     It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResult),
-                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => ( y(null, testError).Result as OperationResult.ErrorResult<int>).Message == testError),
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => (y(null, testError).Result as OperationResult.ErrorResult<int>).Message == testError),
                     It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as OperationResult.FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
             Assert.Equal(expectedResult, actualResult);
         }
-        
+
         [Fact]
         public async void BindAsyncTestTaskIOperationResultToFuncIOperationResult()
         {
@@ -221,7 +221,7 @@ namespace Fls.Results.Test
 
             var source = Task.FromResult(sourceMock.Object);
 
-            var actualResult = await source. BindAsync(
+            var actualResult = await source.BindAsync(
                 // This function is supposed to be passed as the matchSuccess case
                 _ =>
                 {
@@ -241,7 +241,7 @@ namespace Fls.Results.Test
                 ), Times.Once);
 
             Assert.Equal(expectedResult, actualResult);
-        }  
+        }
 
 
         [Fact]
@@ -256,7 +256,7 @@ namespace Fls.Results.Test
                 )).Returns(sourceMock.Object);
 
             var expectedResultSuccess = sourceMock.Object;
-            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+            var expectedResultOther = new Mock<IOperationResult<int>>().Object;
 
             var source = Task.FromResult(sourceMock.Object);
             var actualResult = await source.BindErrorAsync(
@@ -279,7 +279,7 @@ namespace Fls.Results.Test
                 ), Times.Once);
 
             Assert.Equal(expectedResultSuccess, actualResult);
-        }   
+        }
 
         [Fact]
         public async void BindErrorAsyncTestWithoutErrorCodeIOperationResultFuncIOperationResult()
@@ -293,7 +293,7 @@ namespace Fls.Results.Test
                 )).Returns(Task.FromResult(sourceMock.Object));
 
             var expectedResultSuccess = sourceMock.Object;
-            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+            var expectedResultOther = new Mock<IOperationResult<int>>().Object;
 
             var source = sourceMock.Object;
             var actualResult = await source.BindErrorAsync(
@@ -316,7 +316,7 @@ namespace Fls.Results.Test
                 ), Times.Once);
 
             Assert.Equal(expectedResultSuccess, actualResult);
-        }   
+        }
 
         [Fact]
         public async void BindErrorAsyncTestWithoutErrorCodeTaskIOperationResultFuncTaskIOperationResult()
@@ -330,7 +330,7 @@ namespace Fls.Results.Test
                 )).Returns(Task.FromResult(sourceMock.Object));
 
             var expectedResultSuccess = sourceMock.Object;
-            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+            var expectedResultOther = new Mock<IOperationResult<int>>().Object;
 
             var source = Task.FromResult(sourceMock.Object);
             var actualResult = await source.BindErrorAsync(
@@ -353,7 +353,7 @@ namespace Fls.Results.Test
                 ), Times.Once);
 
             Assert.Equal(expectedResultSuccess, actualResult);
-        } 
+        }
 
         [Fact]
         public async void BindErrorAsyncTestWithErrorCodeTaskIOperationResultFuncIOperationResult()
@@ -367,7 +367,7 @@ namespace Fls.Results.Test
                 )).Returns(sourceMock.Object);
 
             var expectedResultSuccess = sourceMock.Object;
-            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+            var expectedResultOther = new Mock<IOperationResult<int>>().Object;
 
             var source = Task.FromResult(sourceMock.Object);
             var actualResult = await source.BindErrorAsync(
@@ -392,7 +392,7 @@ namespace Fls.Results.Test
                 ), Times.Once);
 
             Assert.Equal(expectedResultSuccess, actualResult);
-        }   
+        }
 
         [Fact]
         public async void BindErrorAsyncTestWithErrorCodeIOperationResultFuncIOperationResult()
@@ -406,7 +406,7 @@ namespace Fls.Results.Test
                 )).Returns(Task.FromResult(sourceMock.Object));
 
             var expectedResultSuccess = sourceMock.Object;
-            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+            var expectedResultOther = new Mock<IOperationResult<int>>().Object;
 
             var source = sourceMock.Object;
             var actualResult = await source.BindErrorAsync(
@@ -431,7 +431,7 @@ namespace Fls.Results.Test
                 ), Times.Once);
 
             Assert.Equal(expectedResultSuccess, actualResult);
-        }   
+        }
 
         [Fact]
         public async void BindErrorAsyncTestWithErrorCodeTaskIOperationResultFuncTaskIOperationResult()
@@ -445,7 +445,7 @@ namespace Fls.Results.Test
                 )).Returns(Task.FromResult(sourceMock.Object));
 
             var expectedResultSuccess = sourceMock.Object;
-            var expectedResultOther= new Mock<IOperationResult<int>>().Object;
+            var expectedResultOther = new Mock<IOperationResult<int>>().Object;
 
             var source = Task.FromResult(sourceMock.Object);
             var actualResult = await source.BindErrorAsync(
@@ -470,6 +470,6 @@ namespace Fls.Results.Test
                 ), Times.Once);
 
             Assert.Equal(expectedResultSuccess, actualResult);
-        }             
-    }    
+        }
+    }
 }
