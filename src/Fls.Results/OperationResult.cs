@@ -122,5 +122,39 @@ namespace Fls.Results
         {
             return (await source).Bind(bind);
         }
+
+        public static IOperationResult<T> ToResult<T>(this T source)
+        {
+            return Success(source);
+        }
+
+        public static IOperationResult<T> Try<T>(Func<T> foo)
+        {
+            try
+            {
+                return foo().ToResult();
+            }
+            catch (Exception ex)
+            {
+                return Failure<T>(ex);
+            }
+        }
+
+        public static async Task<IOperationResult<T>> TryAsync<T>(Func<T> foo)
+        {
+            return await Try(foo);
+        }
+
+        public static async Task<IOperationResult<T>> TryAsync<T>(Func<Task<T>> foo)
+        {
+            try
+            {
+                return (await foo()).ToResult();
+            }
+            catch (Exception ex)
+            {
+                return Failure<T>(ex);
+            }
+        }
     }
 }
