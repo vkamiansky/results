@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 
 namespace Fls.Results
 {
-
     // Implement this interface if you need new result type
     public interface IOperationResult<T>
     {
