@@ -4,32 +4,38 @@ using System.Threading.Tasks;
 namespace Fls.Results
 {
     /// <summary>
-    /// Class providing functional computing chains, 
+    /// Provides functional computing chains, 
     /// another words monad providing class
     /// </summary>
     public static class OperationResult
     {
         /// <summary>
-        /// OperationResult member class implementing IOperationResult interface
-        /// providing succeeded operation value
+        /// Provides succeeded operation value, wrapping the real result value to make it 
+        /// honest 
         /// </summary>
         public sealed class SuccessResult<T> : IOperationResult<T>
         {
             /// <summary>
-            /// Result value of any type
+            /// Wrapped result value of any type
             /// </summary>
             /// <value></value>
             public T Value { get; private set; }
 
             /// <summary>
-            /// Constructor with input parametr of any type
+            /// Constructor with input value of any type to wrap
             /// </summary>
             public SuccessResult(T value)
             {
                 Value = value;
             }
 
-            /// <inheritdoc/>
+            /// <summary>
+            /// Matches bindSuccess delegate to the Value.
+            /// </summary>
+            /// <param name="bindSuccess">Delegate called in case of success</param>
+            /// <param name="bindError">Delegate called in case of error</param>
+            /// <param name="bindFailure">Delegate called in case of failure</param>
+            /// <returns>Execution result of bindSuccess</returns>
             public IOperationResult<TOut> Match<TOut>(
                 Func<T, IOperationResult<TOut>> bindSuccess,
                 Func<string, IOperationResult<TOut>> bindError,
@@ -38,7 +44,9 @@ namespace Fls.Results
                 return bindSuccess(Value);
             }
 
-            /// <inheritdoc/>
+            /// <summary>
+            /// Async version of Match
+            /// </summary>
             public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
                 Func<T, Task<IOperationResult<TOut>>> bindSuccess,
                 Func<string, Task<IOperationResult<TOut>>> bindError,
@@ -49,8 +57,7 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// OperationResult member class implementing IOperationResult interface
-        /// providing error execution result
+        /// Provides error execution result. Wraps the real result value, which is supposed to be an error message.
         /// </summary>
         public sealed class ErrorResult<T> : IOperationResult<T>
         {
@@ -60,15 +67,20 @@ namespace Fls.Results
             public string Message { get; private set; }
 
             /// <summary>
-            /// Constructor
+            /// Constructor with input error message text
             /// </summary>
-            /// <param name="message">Error message text</param>
             public ErrorResult(string message)
             {
                 Message = message;
             }
 
-            /// <inheritdoc/>
+                        /// <summary>
+            /// Matches bindError delegate to the Value.
+            /// </summary>
+            /// <param name="bindSuccess">Delegate called in case of success</param>
+            /// <param name="bindError">Delegate called in case of error</param>
+            /// <param name="bindFailure">Delegate called in case of failure</param>
+            /// <returns>Execution result of bindError</returns>
             public IOperationResult<TOut> Match<TOut>(
                 Func<T, IOperationResult<TOut>> bindSuccess,
                 Func<string, IOperationResult<TOut>> bindError,
@@ -77,7 +89,9 @@ namespace Fls.Results
                 return bindError(Message);
             }
 
-            /// <inheritdoc/>
+            /// <summary>
+            /// Async version of Match
+            /// </summary>
             public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
                 Func<T, Task<IOperationResult<TOut>>> bindSuccess,
                 Func<string, Task<IOperationResult<TOut>>> bindError,
@@ -87,26 +101,30 @@ namespace Fls.Results
             }
         }
         /// <summary>
-        /// OperationResult member class implementing IOperationResult interface
-        /// providing error execution result
+        /// Provides failure execution result. Wraps the real result value, which is supposed to be an exception.
         /// </summary>
         public sealed class FailureResult<T> : IOperationResult<T>
         {
             /// <summary>
-            /// Exception value
+            /// Exception value of executed operation
             /// </summary>
             public Exception Exception { get; private set; }
 
             /// <summary>
-            /// Constructor
+            /// Constructed with exception value type, extrated from previously executed operation
             /// </summary>
-            /// <param name="exception">Exception value</param>
             public FailureResult(Exception exception)
             {
                 Exception = exception;
             }
 
-            /// <inheritdoc/>
+                        /// <summary>
+            /// Matches bindFailure delegate to the Value.
+            /// </summary>
+            /// <param name="bindSuccess">Delegate called in case of success</param>
+            /// <param name="bindError">Delegate called in case of error</param>
+            /// <param name="bindFailure">Delegate called in case of failure</param>
+            /// <returns>Execution result of bindFailure</returns>
             public IOperationResult<TOut> Match<TOut>(
                 Func<T, IOperationResult<TOut>> bindSuccess,
                 Func<string, IOperationResult<TOut>> bindError,
@@ -115,7 +133,9 @@ namespace Fls.Results
                 return bindFailure(Exception);
             }
 
-            /// <inheritdoc/>
+            /// <summary>
+            /// Async version of Match
+            /// </summary>
             public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
                 Func<T, Task<IOperationResult<TOut>>> bindSuccess,
                 Func<string, Task<IOperationResult<TOut>>> bindError,
@@ -126,7 +146,7 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Member function to produce success value type
+        /// Produces success value type for given value
         /// </summary>
         public static IOperationResult<T> Success<T>(T value)
         {
@@ -134,7 +154,7 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Member function to produce error value type
+        /// Produces error value type for given error message text
         /// </summary>
         public static IOperationResult<T> Error<T>(string message)
         {
@@ -142,7 +162,7 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Member function to produce failure value type
+        /// Produces failure value type for given exception
         /// </summary>
         public static IOperationResult<T> Failure<T>(Exception exception)
         {
@@ -165,7 +185,7 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Async version of Bind
+        /// Async version of Bind, to support functional pipline with IOperationResult/<T/> as output of previous operaion
         /// </summary>
         /// <returns>Task from one of value type SuccessResult, ErrorResult or FailureResult</returns>
         public static async Task<IOperationResult<TOut>> BindAsync<TIn, TOut>(this IOperationResult<TIn> source, Func<TIn, Task<IOperationResult<TOut>>> bindAsync)
@@ -178,7 +198,7 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Async version of Bind
+        /// Async version of Bind, to suport functional pipeline with async Task as output of previous operation
         /// </summary>
         /// <returns>Task from one of value type SuccessResult, ErrorResult or FailureResult</returns>
         public static async Task<IOperationResult<TOut>> BindAsync<TIn, TOut>(this Task<IOperationResult<TIn>> source, Func<TIn, Task<IOperationResult<TOut>>> bindAsync)
@@ -187,7 +207,7 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Async version of Bind
+        /// Async version of Bind, to suport functional pipeline with async Task as output of previous operation
         /// </summary>
         /// <returns>Task from one of value type SuccessResult, ErrorResult or FailureResult</returns>
         public static async Task<IOperationResult<TOut>> BindAsync<TIn, TOut>(this Task<IOperationResult<TIn>> source, Func<TIn, IOperationResult<TOut>> bind)
