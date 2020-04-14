@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Fls.Results
 {
@@ -170,6 +172,43 @@ namespace Fls.Results
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this Task<IOperationResult<T>> source, Func<int?, string, Task<IOperationResult<T>>> bind, Func<Exception, string> getMessage, int? exceptionCode = null)
         {
             return await (await source).BindErrorAsync(bind, getMessage, exceptionCode);
+        }
+
+        public static IOperationResult<T> ToResult<T>(this T source)
+        {
+            return Success(source);
+        }
+        
+        public static IOperationResult<T> IfError<T>(this IOperationResult<T> source, Func<IOperationResult<T>> returnResult)
+        {
+            return source.Match(
+                _ => source,
+                (_, error) => returnResult(),
+                failure => returnResult()
+            );
+        }
+
+        public static async Task<IOperationResult<T>> IfErrorAsync<T>(this Task<IOperationResult<T>> source, Func<IOperationResult<T>> returnResult)
+        {
+            return (await source).IfError(returnResult);
+        }
+
+        public static IOperationResult<T[]> All<T>(this IEnumerable<Func<IOperationResult<T>>> source)
+        {
+            return source.Aggregate(new List<T>().ToResult(), (a, f) => a.Bind(aList => f().Bind(newRes =>
+            {
+                aList.Add(newRes);
+                return aList.ToResult();
+            }))).Bind(x => x.ToArray().ToResult());
+        }
+
+        public static IOperationResult<T[]> Any<T>(this IEnumerable<Func<IOperationResult<T>>> source, T returnAsError)
+        {
+            return source.Aggregate(new List<T>().ToResult(), (a, f) => a.Bind(aList => f().IfError(() => Success(returnAsError)).Bind(newRes =>
+            {
+                    aList.Add(newRes);
+                    return aList.ToResult();
+            }))).Bind(x => x.ToArray().ToResult());
         }
     }
 }
