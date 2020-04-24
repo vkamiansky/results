@@ -215,9 +215,15 @@ namespace Fls.Results
         {
             return source.Aggregate(new List<T>().ToResult(), (a, f) => a.Bind(aList => f().Bind(newRes =>
             {
-                    aList.Add(newRes);
+                aList.Add(newRes);
+                return aList.ToResult();
+            }).IfError(() => 
+            {
+                if (aList.Count() != 0) {
                     return aList.ToResult();
-            }).IfError(() => aList.ToResult()))).Bind(x => x.ToArray().ToResult());
+                }
+                return Error<List<T>>("");
+            }))).Bind(x => x.ToArray().ToResult());
         }
     }
 }
