@@ -201,16 +201,7 @@ namespace Fls.Results
                 return aList.ToResult();
             }))).Bind(x => x.ToArray().ToResult());
         }
-
-        public static IOperationResult<T[]> Any<T>(this IEnumerable<Func<IOperationResult<T>>> source, T returnAsError)
-        {
-            return source.Aggregate(new List<T>().ToResult(), (a, f) => a.Bind(aList => f().IfError(() => Success(returnAsError)).Bind(newRes =>
-            {
-                    aList.Add(newRes);
-                    return aList.ToResult();
-            }))).Bind(x => x.ToArray().ToResult());
-        }
-
+        
         public static IOperationResult<T[]> Any<T>(this IEnumerable<Func<IOperationResult<T>>> source)
         {
             return source.Aggregate(new List<T>().ToResult(), (a, f) => a.Bind(aList => f().Bind(newRes =>
