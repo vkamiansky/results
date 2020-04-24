@@ -223,7 +223,7 @@ namespace Fls.Results
 
         /// <summary>
         /// Bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
-        /// If the error result is provided with error code it also might be used in binding
+        /// If the error result is provided with error code it also might be used in binding.
         /// </summary>
         /// <remarks>
         /// If source matches as a success it is passed on, if not the error message/code pair is bound with bind. If source 
@@ -247,7 +247,7 @@ namespace Fls.Results
         /// <summary>
         /// Asynchronously binds the result of previous operation to suitable value. If the success result passes as input, the bind function is called 
         /// and it's result passes on. If the error/failure one, output put result would be task from ErrorResult/FailureResult type.
-        /// It's async version of Bind, to support functional pipline with IOperationResult/<T/> as output of previous operaion
+        /// It's async version of Bind, to support functional pipline with IOperationResult/<T/> as output of previous operaion.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="bind">Delegate executed in case of success of previous operation</param>
@@ -264,7 +264,7 @@ namespace Fls.Results
         /// <summary>
         /// Asynchronously binds the result of previous operation to suitable value. If the task from success result passes as input, the bind function is called 
         /// and it's result passes on. If the error/failure one, output put result would be task from ErrorResult/FailureResult type.
-        /// It's async version of Bind, to support functional pipline with IOperationResult/<T/> as output of previous operaion
+        /// It's async version of Bind, to support functional pipline with IOperationResult/<T/> as output of previous operaion.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="bind">Delegate executed in case of success of previous operation</param>
@@ -289,7 +289,7 @@ namespace Fls.Results
 
         /// <summary>
         /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
-        /// If the error result is provided with error code it also might be used in binding
+        /// If the error result is provided with error code it also might be used in binding.
         /// </summary>
         /// <remarks>
         /// If source matches as a success it is passed on, if not the error message pair is bound with bind. If source 
@@ -308,7 +308,7 @@ namespace Fls.Results
 
         /// <summary>
         /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
-        /// If the error result is provided with error code it also might be used in binding
+        /// If the error result is provided with error code it also might be used in binding.
         /// </summary>
         /// <remarks>
         /// If source matches as a success it is passed on, if not the error message pair is bound with bind. If source 
@@ -327,7 +327,7 @@ namespace Fls.Results
 
         /// <summary>
         /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
-        /// If the error result is provided with error code it also might be used in binding
+        /// If the error result is provided with error code it also might be used in binding.
         /// </summary>
         /// <remarks>
         /// If source matches as a success it is passed on, if not the error message pair is bound with bind. If source 
@@ -346,7 +346,7 @@ namespace Fls.Results
 
         /// <summary>
         /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
-        /// If the error result is provided with error code it also might be used in binding
+        /// If the error result is provided with error code it also might be used in binding.
         /// </summary>
         /// <remarks>
         /// If source matches as a success it is passed on, if not the error message/code pair is bound with bind. If source 
@@ -365,7 +365,7 @@ namespace Fls.Results
 
         /// <summary>
         /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
-        /// If the error result is provided with error code it also might be used in binding
+        /// If the error result is provided with error code it also might be used in binding.
         /// </summary>
         /// <remarks>
         /// If source matches as a success it is passed on, if not the error message/code pair is bound with bind. If source 
@@ -388,7 +388,7 @@ namespace Fls.Results
 
         /// <summary>
         /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
-        /// If the error result is provided with error code it also might be used in binding
+        /// If the error result is provided with error code it also might be used in binding.
         /// </summary>
         /// <remarks>
         /// If source matches as a success it is passed on, if not the error message/code pair is bound with bind. If source 
@@ -405,11 +405,21 @@ namespace Fls.Results
             return await (await source).BindErrorAsync(bind, getMessage, exceptionCode);
         }
 
+        /// <summary>
+        /// Wraps value as the success result to make one suitable for using.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>Return SuccessResult from passes value</returns>
         public static IOperationResult<T> ToResult<T>(this T source)
         {
             return Success(source);
         }
 
+        /// <summary>
+        /// Calls input function to make it honest. If the call of foo throws an exception the output of Try would be failure type. 
+        /// Other scenarios return success type.
+        /// </summary>
         public static IOperationResult<T> Try<T>(Func<T> foo)
         {
             try
@@ -422,6 +432,10 @@ namespace Fls.Results
             }
         }
 
+        /// <summary>
+        /// Calls input async function to make it honest. If the call of foo throws an exception the output of Try would be task from failure type. 
+        /// Other scenarios return task from success type.
+        /// </summary>
         public static async Task<IOperationResult<T>> TryAsync<T>(Func<Task<T>> foo)
         {
             try
