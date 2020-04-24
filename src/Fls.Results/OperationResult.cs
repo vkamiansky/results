@@ -178,7 +178,7 @@ namespace Fls.Results
         {
             return Success(source);
         }
-        
+
         public static IOperationResult<T> IfError<T>(this IOperationResult<T> source, Func<IOperationResult<T>> returnResult)
         {
             return source.Match(
@@ -215,6 +215,30 @@ namespace Fls.Results
                 }
                 return Error<List<T>>("");
             }))).Bind(x => x.ToArray().ToResult());
+        }
+
+        public static IOperationResult<T> Try<T>(Func<T> foo)
+        {
+            try
+            {
+                return foo().ToResult();
+            }
+            catch (Exception ex)
+            {
+                return Failure<T>(ex);
+            }
+        }
+
+        public static async Task<IOperationResult<T>> TryAsync<T>(Func<Task<T>> foo)
+        {
+            try
+            {
+                return (await foo()).ToResult();
+            }
+            catch (Exception ex)
+            {
+                return Failure<T>(ex);
+            }
         }
     }
 }

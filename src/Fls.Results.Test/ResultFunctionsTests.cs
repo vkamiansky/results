@@ -471,5 +471,35 @@ namespace Fls.Results.Test
 
             Assert.Equal(expectedResultSuccess, actualResult);
         }
+
+        [Fact]
+        public void TryTest()
+        {
+            // If operation succeeded
+            var testValue = default(int);
+            var returnResult = OperationResult.Try(() => testValue);
+            Assert.IsType<OperationResult.SuccessResult<int>>(returnResult);
+            Assert.Equal(testValue, (returnResult as OperationResult.SuccessResult<int>).Value);
+
+            // If operation fails
+            var testException = default(Exception);
+            var returnException = OperationResult.Try(() => { throw testException; return testValue; });
+            Assert.IsType<OperationResult.FailureResult<int>>(returnException);
+        }
+
+        [Fact]
+        public async void TryAsyncTest()
+        {
+            // If operation succeeded
+            var testValue = default(int);
+            var returnResult = await OperationResult.TryAsync(() => Task.FromResult(testValue));
+            Assert.IsType<OperationResult.SuccessResult<int>>(returnResult);
+            Assert.Equal(testValue, (returnResult as OperationResult.SuccessResult<int>).Value);
+
+            // If operation fails
+            var testException = default(Exception);
+            var returnException = await OperationResult.TryAsync(() => { throw testException; return Task.FromResult(testValue); });
+            Assert.IsType<OperationResult.FailureResult<int>>(returnException);
+        }
     }
 }
