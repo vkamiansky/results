@@ -45,8 +45,12 @@ namespace Fls.Results
             }
 
             /// <summary>
-            /// Async version of Match
+            /// Asynchronously matches bindSuccess delegate to the Value.
             /// </summary>
+            /// <param name="bindSuccess">Delegate called in case of success</param>
+            /// <param name="bindError">Delegate called in case of error</param>
+            /// <param name="bindFailure">Delegate called in case of failure</param>
+            /// <returns>Execution result of bindSuccess</returns>
             public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
                 Func<T, Task<IOperationResult<TOut>>> bindSuccess,
                 Func<int?, string, Task<IOperationResult<TOut>>> bindError,
@@ -96,8 +100,12 @@ namespace Fls.Results
             }
 
             /// <summary>
-            /// Async version of Match
+            /// Asynchronously matches bindError delegate to the Value.
             /// </summary>
+            /// <param name="bindSuccess">Delegate called in case of success</param>
+            /// <param name="bindError">Delegate called in case of error</param>
+            /// <param name="bindFailure">Delegate called in case of failure</param>
+            /// <returns>Execution result of bindError</returns>
             public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
                 Func<T, Task<IOperationResult<TOut>>> bindSuccess,
                 Func<int?, string, Task<IOperationResult<TOut>>> bindError,
@@ -141,8 +149,12 @@ namespace Fls.Results
             }
 
             /// <summary>
-            /// Async version of Match
+            /// Asynchronously matches bindFailure delegate to the Value.
             /// </summary>
+            /// <param name="bindSuccess">Delegate called in case of success</param>
+            /// <param name="bindError">Delegate called in case of error</param>
+            /// <param name="bindFailure">Delegate called in case of failure</param>
+            /// <returns>Execution result of bindFailure</returns>
             public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
                 Func<T, Task<IOperationResult<TOut>>> bindSuccess,
                 Func<int?, string, Task<IOperationResult<TOut>>> bindError,
@@ -177,7 +189,8 @@ namespace Fls.Results
         }
     
         /// <summary>
-        /// Binds the result of previous operation to suitable value
+        /// Binds the result of previous operation to suitable value. If the success result passes as input, the bind function is called 
+        /// and it's result passes on. If the error/failure one, output put result would be ErrorResult/FailureResult type.
         /// </summary>
         ///  <param name="source"></param>
         /// <param name="bind">Delegate executed in case of success of previous operation</param>
@@ -194,6 +207,11 @@ namespace Fls.Results
         /// <summary>
         /// Bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward
         /// </summary>
+        /// /// <remarks>
+        /// If source matches as a success it is passed on, if not the error message pair is bound with bind. If source 
+        /// matches as a failure, the bind function is called with an error message extracted from the attached Exception using 
+        /// getMessage.
+        /// </remarks>
         /// <param name="source"></param>
         /// <param name="bind">Delegate to bind error of failure</param>
         /// <param name="getMessage">Delegetate to find out error message for given exception</param>
@@ -207,6 +225,11 @@ namespace Fls.Results
         /// Bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
         /// If the error result is provided with error code it also might be used in binding
         /// </summary>
+        /// <remarks>
+        /// If source matches as a success it is passed on, if not the error message/code pair is bound with bind. If source 
+        /// matches as a failure, the bind function is called with an error message extracted from the attached Exception using 
+        /// getErrorMessage and the one-for-all critical failure code exceptionCode.
+        /// </remarks>
         /// <param name="source"></param>
         /// <param name="bind">Delegate to bind error of failure</param>
         /// <param name="getErrorMessage">Delegetate to find out error message for given exception</param>
@@ -222,8 +245,12 @@ namespace Fls.Results
                 }
 
         /// <summary>
-        /// Async version of Bind, to support functional pipline with IOperationResult/<T/> as output of previous operaion
+        /// Asynchronously binds the result of previous operation to suitable value. If the success result passes as input, the bind function is called 
+        /// and it's result passes on. If the error/failure one, output put result would be task from ErrorResult/FailureResult type.
+        /// It's async version of Bind, to support functional pipline with IOperationResult/<T/> as output of previous operaion
         /// </summary>
+        /// <param name="source"></param>
+        /// <param name="bind">Delegate executed in case of success of previous operation</param>
         /// <returns>Task from one of value type SuccessResult, ErrorResult or FailureResult</returns>
         public static async Task<IOperationResult<TOut>> BindAsync<TIn, TOut>(this IOperationResult<TIn> source, Func<TIn, Task<IOperationResult<TOut>>> bindAsync)
         {
@@ -235,17 +262,25 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Async version of Bind, to suport functional pipeline with async Task as output of previous operation
+        /// Asynchronously binds the result of previous operation to suitable value. If the task from success result passes as input, the bind function is called 
+        /// and it's result passes on. If the error/failure one, output put result would be task from ErrorResult/FailureResult type.
+        /// It's async version of Bind, to support functional pipline with IOperationResult/<T/> as output of previous operaion
         /// </summary>
+        /// <param name="source"></param>
+        /// <param name="bind">Delegate executed in case of success of previous operation</param>
         /// <returns>Task from one of value type SuccessResult, ErrorResult or FailureResult</returns>
         public static async Task<IOperationResult<TOut>> BindAsync<TIn, TOut>(this Task<IOperationResult<TIn>> source, Func<TIn, Task<IOperationResult<TOut>>> bindAsync)
         {
             return await (await source).BindAsync(bindAsync);
         }
 
-        /// <summary>
-        /// Async version of Bind, to suport functional pipeline with async Task as output of previous operation
+       /// <summary>
+        /// Asynchronously binds the result of previous operation to suitable value. If the task success result passes as input, the bind function is called 
+        /// and it's result passes on. If the error/failure one, output put result would be task from ErrorResult/FailureResult type.
+        /// It's async version of Bind, to support functional pipline with IOperationResult/<T/> as output of previous operaion
         /// </summary>
+        /// <param name="source"></param>
+        /// <param name="bind">Delegate executed in case of success of previous operation</param>
         /// <returns>Task from one of value type SuccessResult, ErrorResult or FailureResult</returns>
         public static async Task<IOperationResult<TOut>> BindAsync<TIn, TOut>(this Task<IOperationResult<TIn>> source, Func<TIn, IOperationResult<TOut>> bind)
         {
@@ -253,8 +288,18 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Async version of BindError
+        /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
+        /// If the error result is provided with error code it also might be used in binding
         /// </summary>
+        /// <remarks>
+        /// If source matches as a success it is passed on, if not the error message pair is bound with bind. If source 
+        /// matches as a failure, the bind function is called with an error message extracted from the attached Exception using 
+        /// getErrorMessage.
+        /// </remarks>
+        /// <param name="source"></param>
+        /// <param name="bind">Delegate to bind error of failure</param>
+        /// <param name="getErrorMessage">Delegetate to find out error message for given exception</param>
+        /// <param name="exceptionCode">The common code to bind for exception</param>
         /// <returns>Task from binned error/failure or result of previous operation if is was succeeded</returns>
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this Task<IOperationResult<T>> source, Func<string, IOperationResult<T>> bind, Func<Exception, string> getMessage)
         {
@@ -262,8 +307,18 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Async version of BindError
+        /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
+        /// If the error result is provided with error code it also might be used in binding
         /// </summary>
+        /// <remarks>
+        /// If source matches as a success it is passed on, if not the error message pair is bound with bind. If source 
+        /// matches as a failure, the bind function is called with an error message extracted from the attached Exception using 
+        /// getErrorMessage.
+        /// </remarks>
+        /// <param name="source"></param>
+        /// <param name="bind">Delegate to bind error of failure</param>
+        /// <param name="getErrorMessage">Delegetate to find out error message for given exception</param>
+        /// <param name="exceptionCode">The common code to bind for exception</param>
         /// <returns>Task from binned error/failure or result of previous operation if is was succeeded</returns>
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this IOperationResult<T> source, Func<string, Task<IOperationResult<T>>> bind, Func<Exception, string> getMessage)
         {
@@ -271,17 +326,37 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Async version of BindError
+        /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
+        /// If the error result is provided with error code it also might be used in binding
         /// </summary>
+        /// <remarks>
+        /// If source matches as a success it is passed on, if not the error message pair is bound with bind. If source 
+        /// matches as a failure, the bind function is called with an error message extracted from the attached Exception using 
+        /// getErrorMessage.
+        /// </remarks>
+        /// <param name="source"></param>
+        /// <param name="bind">Delegate to bind error of failure</param>
+        /// <param name="getErrorMessage">Delegetate to find out error message for given exception</param>
+        /// <param name="exceptionCode">The common code to bind for exception</param>
         /// <returns>Task from binned error/failure or result of previous operation if is was succeeded</returns>
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this Task<IOperationResult<T>> source, Func<string, Task<IOperationResult<T>>> bind, Func<Exception, string> getMessage)
         {
             return await (await source).BindErrorAsync(bind, getMessage);
         }
 
-         /// <summary>
-        /// Async version of BindError
+        /// <summary>
+        /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
+        /// If the error result is provided with error code it also might be used in binding
         /// </summary>
+        /// <remarks>
+        /// If source matches as a success it is passed on, if not the error message/code pair is bound with bind. If source 
+        /// matches as a failure, the bind function is called with an error message extracted from the attached Exception using 
+        /// getErrorMessage and the one-for-all critical failure code exceptionCode.
+        /// </remarks>
+        /// <param name="source"></param>
+        /// <param name="bind">Delegate to bind error of failure</param>
+        /// <param name="getErrorMessage">Delegetate to find out error message for given exception</param>
+        /// <param name="exceptionCode">The common code to bind for exception</param>
         /// <returns>Task from binned error/failure or result of previous operation if is was succeeded</returns>
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this Task<IOperationResult<T>> source, Func<int?, string, IOperationResult<T>> bind, Func<Exception, string> getMessage, int? exceptionCode = null)
         {
@@ -289,8 +364,18 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Async version of BindError
+        /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
+        /// If the error result is provided with error code it also might be used in binding
         /// </summary>
+        /// <remarks>
+        /// If source matches as a success it is passed on, if not the error message/code pair is bound with bind. If source 
+        /// matches as a failure, the bind function is called with an error message extracted from the attached Exception using 
+        /// getErrorMessage and the one-for-all critical failure code exceptionCode.
+        /// </remarks>
+        /// <param name="source"></param>
+        /// <param name="bind">Delegate to bind error of failure</param>
+        /// <param name="getErrorMessage">Delegetate to find out error message for given exception</param>
+        /// <param name="exceptionCode">The common code to bind for exception</param>
         /// <returns>Task from binned error/failure or result of previous operation if is was succeeded</returns>
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this IOperationResult<T> source, Func<int?, string, Task<IOperationResult<T>>> bind, Func<Exception, string> getMessage, int? exceptionCode = null)
         {
@@ -302,8 +387,18 @@ namespace Fls.Results
         }
 
         /// <summary>
-        /// Async version of BindError
+        /// Asynchronously bindes exactly errors and failures. In case of error of failure calls bind, other ways passes previous result forward. 
+        /// If the error result is provided with error code it also might be used in binding
         /// </summary>
+        /// <remarks>
+        /// If source matches as a success it is passed on, if not the error message/code pair is bound with bind. If source 
+        /// matches as a failure, the bind function is called with an error message extracted from the attached Exception using 
+        /// getErrorMessage and the one-for-all critical failure code exceptionCode.
+        /// </remarks>
+        /// <param name="source"></param>
+        /// <param name="bind">Delegate to bind error of failure</param>
+        /// <param name="getErrorMessage">Delegetate to find out error message for given exception</param>
+        /// <param name="exceptionCode">The common code to bind for exception</param>
         /// <returns>Task from binned error/failure or result of previous operation if is was succeeded</returns>
         public static async Task<IOperationResult<T>> BindErrorAsync<T>(this Task<IOperationResult<T>> source, Func<int?, string, Task<IOperationResult<T>>> bind, Func<Exception, string> getMessage, int? exceptionCode = null)
         {
