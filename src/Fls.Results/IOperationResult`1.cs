@@ -5,14 +5,14 @@ namespace Fls.Results
 {
     public interface IOperationResult<T>
     {
-        IOperationResult<TOut> Match<TOut>(
-            Func<T, IOperationResult<TOut>> bindSuccess,
-            Func<int?, string, IOperationResult<TOut>> bindError,
-            Func<Exception, IOperationResult<TOut>> bindFailure);
+        TOut Match<TOut>(
+            Func<T, TOut> bindSuccess,
+            Func<int?, string, TOut> bindError,
+            Func<Exception, TOut> bindFailure);
 
-        Task<IOperationResult<TOut>> MatchAsync<TOut>(
-            Func<T, Task<IOperationResult<TOut>>> bindSuccess,
-            Func<int?, string, Task<IOperationResult<TOut>>> bindError,
-            Func<Exception, Task<IOperationResult<TOut>>> bindFailure);
+        Task<TOut> MatchAsync<TOut>(
+            Func<T, Task<TOut>> bindSuccess,
+            Func<int?, string, Task<TOut>> bindError,
+            Func<Exception, Task<TOut>> bindFailure);
     }
 }

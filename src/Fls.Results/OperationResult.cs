@@ -13,18 +13,18 @@ namespace Fls.Results
                 Value = value;
             }
 
-            public IOperationResult<TOut> Match<TOut>(
-                Func<T, IOperationResult<TOut>> bindSuccess,
-                Func<int?, string, IOperationResult<TOut>> bindError,
-                Func<Exception, IOperationResult<TOut>> bindFailure)
+            public TOut Match<TOut>(
+                Func<T, TOut> bindSuccess,
+                Func<int?, string, TOut> bindError,
+                Func<Exception, TOut> bindFailure)
             {
                 return bindSuccess(Value);
             }
 
-            public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
-                Func<T, Task<IOperationResult<TOut>>> bindSuccess,
-                Func<int?, string, Task<IOperationResult<TOut>>> bindError,
-                Func<Exception, Task<IOperationResult<TOut>>> bindFailure)
+            public async Task<TOut> MatchAsync<TOut>(
+                Func<T, Task<TOut>> bindSuccess,
+                Func<int?, string, Task<TOut>> bindError,
+                Func<Exception, Task<TOut>> bindFailure)
             {
                 return await bindSuccess(Value);
             }
@@ -39,18 +39,18 @@ namespace Fls.Results
                 Message = message;
             }
 
-            public IOperationResult<TOut> Match<TOut>(
-                Func<T, IOperationResult<TOut>> bindSuccess,
-                Func<int?, string, IOperationResult<TOut>> bindError,
-                Func<Exception, IOperationResult<TOut>> bindFailure)
+            public TOut Match<TOut>(
+                Func<T, TOut> bindSuccess,
+                Func<int?, string, TOut> bindError,
+                Func<Exception, TOut> bindFailure)
             {
                 return bindError(Code, Message);
             }
 
-            public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
-                Func<T, Task<IOperationResult<TOut>>> bindSuccess,
-                Func<int?, string, Task<IOperationResult<TOut>>> bindError,
-                Func<Exception, Task<IOperationResult<TOut>>> bindFailure)
+            public async Task<TOut> MatchAsync<TOut>(
+                Func<T, Task<TOut>> bindSuccess,
+                Func<int?, string, Task<TOut>> bindError,
+                Func<Exception, Task<TOut>> bindFailure)
             {
                 return await bindError(Code, Message);
             }
@@ -64,18 +64,18 @@ namespace Fls.Results
                 Exception = exception;
             }
 
-            public IOperationResult<TOut> Match<TOut>(
-                Func<T, IOperationResult<TOut>> bindSuccess,
-                Func<int?, string, IOperationResult<TOut>> bindError,
-                Func<Exception, IOperationResult<TOut>> bindFailure)
+            public TOut Match<TOut>(
+                Func<T, TOut> bindSuccess,
+                Func<int?, string, TOut> bindError,
+                Func<Exception, TOut> bindFailure)
             {
                 return bindFailure(Exception);
             }
 
-            public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
-                Func<T, Task<IOperationResult<TOut>>> bindSuccess,
-                Func<int?, string, Task<IOperationResult<TOut>>> bindError,
-                Func<Exception, Task<IOperationResult<TOut>>> bindFailure)
+            public async Task<TOut> MatchAsync<TOut>(
+                Func<T, Task<TOut>> bindSuccess,
+                Func<int?, string, Task<TOut>> bindError,
+                Func<Exception, Task<TOut>> bindFailure)
             {
                 return await bindFailure(Exception);
             }
