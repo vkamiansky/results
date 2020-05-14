@@ -483,7 +483,7 @@ namespace Fls.Results.Test
 
             // If operation fails
             var testException = default(Exception);
-            var returnException = OperationResult.Try(() => { throw testException; return testValue; });
+            var returnException = OperationResult.Try<int>(() => { throw testException; });
             Assert.IsType<OperationResult.FailureResult<int>>(returnException);
         }
 
@@ -498,7 +498,7 @@ namespace Fls.Results.Test
 
             // If operation fails
             var testException = default(Exception);
-            var returnException = await OperationResult.TryAsync(() => { throw testException; return Task.FromResult(testValue); });
+            var returnException = await OperationResult.TryAsync<int>(() => { throw testException; });
             Assert.IsType<OperationResult.FailureResult<int>>(returnException);
         }
     }
