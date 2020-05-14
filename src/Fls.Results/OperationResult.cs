@@ -13,18 +13,18 @@ namespace Fls.Results
                 Value = value;
             }
 
-            public IOperationResult<TOut> Match<TOut>(
-                Func<T, IOperationResult<TOut>> bindSuccess,
-                Func<int?, string, IOperationResult<TOut>> bindError,
-                Func<Exception, IOperationResult<TOut>> bindFailure)
+            public TOut Match<TOut>(
+                Func<T, TOut> bindSuccess,
+                Func<int?, string, TOut> bindError,
+                Func<Exception, TOut> bindFailure)
             {
                 return bindSuccess(Value);
             }
 
-            public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
-                Func<T, Task<IOperationResult<TOut>>> bindSuccess,
-                Func<int?, string, Task<IOperationResult<TOut>>> bindError,
-                Func<Exception, Task<IOperationResult<TOut>>> bindFailure)
+            public async Task<TOut> MatchAsync<TOut>(
+                Func<T, Task<TOut>> bindSuccess,
+                Func<int?, string, Task<TOut>> bindError,
+                Func<Exception, Task<TOut>> bindFailure)
             {
                 return await bindSuccess(Value);
             }
@@ -39,18 +39,18 @@ namespace Fls.Results
                 Message = message;
             }
 
-            public IOperationResult<TOut> Match<TOut>(
-                Func<T, IOperationResult<TOut>> bindSuccess,
-                Func<int?, string, IOperationResult<TOut>> bindError,
-                Func<Exception, IOperationResult<TOut>> bindFailure)
+            public TOut Match<TOut>(
+                Func<T, TOut> bindSuccess,
+                Func<int?, string, TOut> bindError,
+                Func<Exception, TOut> bindFailure)
             {
                 return bindError(Code, Message);
             }
 
-            public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
-                Func<T, Task<IOperationResult<TOut>>> bindSuccess,
-                Func<int?, string, Task<IOperationResult<TOut>>> bindError,
-                Func<Exception, Task<IOperationResult<TOut>>> bindFailure)
+            public async Task<TOut> MatchAsync<TOut>(
+                Func<T, Task<TOut>> bindSuccess,
+                Func<int?, string, Task<TOut>> bindError,
+                Func<Exception, Task<TOut>> bindFailure)
             {
                 return await bindError(Code, Message);
             }
@@ -64,18 +64,18 @@ namespace Fls.Results
                 Exception = exception;
             }
 
-            public IOperationResult<TOut> Match<TOut>(
-                Func<T, IOperationResult<TOut>> bindSuccess,
-                Func<int?, string, IOperationResult<TOut>> bindError,
-                Func<Exception, IOperationResult<TOut>> bindFailure)
+            public TOut Match<TOut>(
+                Func<T, TOut> bindSuccess,
+                Func<int?, string, TOut> bindError,
+                Func<Exception, TOut> bindFailure)
             {
                 return bindFailure(Exception);
             }
 
-            public async Task<IOperationResult<TOut>> MatchAsync<TOut>(
-                Func<T, Task<IOperationResult<TOut>>> bindSuccess,
-                Func<int?, string, Task<IOperationResult<TOut>>> bindError,
-                Func<Exception, Task<IOperationResult<TOut>>> bindFailure)
+            public async Task<TOut> MatchAsync<TOut>(
+                Func<T, Task<TOut>> bindSuccess,
+                Func<int?, string, Task<TOut>> bindError,
+                Func<Exception, Task<TOut>> bindFailure)
             {
                 return await bindFailure(Exception);
             }
@@ -89,6 +89,11 @@ namespace Fls.Results
         public static IOperationResult<T> Error<T>(string message)
         {
             return new ErrorResult<T>(message);
+        }
+
+        public static IOperationResult<T> Error<T>(int code, string message)
+        {
+            return new ErrorResult<T>(message, code);
         }
 
         public static IOperationResult<T> Failure<T>(Exception exception)
@@ -177,6 +182,16 @@ namespace Fls.Results
             return Success(source);
         }
 
+        public static async Task<IOperationResult<T>> ToResultAsync<T>(this Task<T> source)
+        {
+            return Success(await source);
+        }
+
+        public static IOperationResult<T> ToErrorResult<T>(this T source, string error)
+        {
+            return Error<T>(error);
+        }
+
         public static IOperationResult<T> Try<T>(Func<T> foo)
         {
             try
@@ -199,6 +214,85 @@ namespace Fls.Results
             {
                 return Failure<T>(ex);
             }
+        }
+
+        public static async Task<IOperationResult<T>> UseErrorAsync<T>(this IOperationResult<T> source, Func<string, Task> use, Func<Exception, string> getMessage)
+        {
+            return await source.MatchAsync(
+                _ => Task.FromResult(source),
+                async (code, error) =>
+                {
+                    await use(error);
+                    return source;
+                },
+                async failure =>
+                {
+                    await use(getMessage(failure));
+                    return source;
+                }
+            );
+        }
+
+        public static IOperationResult<T> UseError<T>(this IOperationResult<T> source, Action<string> use, Func<Exception, string> getMessage)
+        {
+            return source.Match(
+                _ => source,
+                (code, error) =>
+                {
+                    use(error);
+                    return source;
+                },
+                failure =>
+                {
+                    use(getMessage(failure));
+                    return source;
+                }
+            );
+        }
+
+        public static async Task<IOperationResult<T>> UseErrorAsync<T>(this Task<IOperationResult<T>> source, Func<string, Task> use, Func<Exception, string> getMessage)
+        {
+            return await (await source).UseErrorAsync(use, getMessage);
+        }
+
+        public static async Task<IOperationResult<T>> UseErrorAsync<T>(this Task<IOperationResult<T>> source, Action<string> use, Func<Exception, string> getMessage)
+        {
+            return (await source).UseError(use, getMessage);
+        }
+
+        public static IOperationResult<T> Use<T>(this IOperationResult<T> source, Action<T> sideEffect)
+        {
+            return source.Match(
+                success =>
+                {
+                    sideEffect(success);
+                    return source;
+                },
+                (_, __) => source,
+                _ => source);
+        }
+
+        public static async Task<IOperationResult<T>> UseAsync<T>(this IOperationResult<T> source, Func<T, Task> sideEffect)
+        {
+            return await source.MatchAsync(
+                async success =>
+                {
+                    await sideEffect(success);
+                    return source;
+                },
+                (_, __) => Task.FromResult(source),
+                _ => Task.FromResult(source)
+            );
+        }
+
+        public static async Task<IOperationResult<T>> UseAsync<T>(this Task<IOperationResult<T>> source, Func<T, Task> sideEffect)
+        {
+            return await (await source).UseAsync(sideEffect);
+        }
+
+        public static async Task<IOperationResult<T>> UseAsync<T>(this Task<IOperationResult<T>> source, Action<T> sideEffect)
+        {
+            return (await source).Use(sideEffect);
         }
     }
 }
