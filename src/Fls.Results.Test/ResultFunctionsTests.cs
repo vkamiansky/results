@@ -501,5 +501,123 @@ namespace Fls.Results.Test
             var returnException = await OperationResult.TryAsync<int>(() => { throw testException; });
             Assert.IsType<OperationResult.FailureResult<int>>(returnException);
         }
+
+        [Fact]
+        public void AnyErrorTest()
+        {
+            var message1 = "Message1";
+            var message2 = "Message2";
+            var errorCode2 = 555;
+            var resultFuncs = new Func<IOperationResult<int>>[]
+            {
+                () => OperationResult.Error<int>(message1),
+                () => OperationResult.Error<int>(errorCode2, message2)
+            };
+
+            var res = resultFuncs.Any();
+
+            res.Match(_ =>
+            {
+                Assert.False(true);
+                return 0;
+            }, (code, error) =>
+            {
+                Assert.Equal(errorCode2, code);
+                Assert.Equal(message2, error);
+                return 0;
+            }, _ =>
+            {
+                Assert.False(true);
+                return 0;
+            });
+        }
+
+        [Fact]
+        public void AnyFailureTest()
+        {
+            var message = "Message";
+            var exception = new Exception("Exception");
+            var resultFuncs = new Func<IOperationResult<int>>[]
+            {
+                () => OperationResult.Error<int>(message),
+                () => OperationResult.Failure<int>(exception)
+            };
+
+            var res = resultFuncs.Any();
+
+            res.Match(_ =>
+            {
+                Assert.False(true);
+                return 0;
+            }, (_, __) =>
+            {
+                Assert.False(true);
+                return 0;
+            }, ex =>
+            {
+                Assert.Equal(exception, ex);
+                return 0;
+            });
+        }
+
+        [Fact]
+        public void AnySuccessTest()
+        {
+            var message = "Message";
+            var successValue = 123;
+            var resultFuncs = new Func<IOperationResult<int>>[]
+            {
+                () => OperationResult.Error<int>(message),
+                () => OperationResult.Success<int>(successValue)
+            };
+
+            var res = resultFuncs.Any();
+
+            res.Match(value =>
+            {
+                Assert.Equal(successValue, value);
+                return 0;
+            }, (_, __) =>
+            {
+                Assert.False(true);
+                return 0;
+            }, ex =>
+            {
+                Assert.False(true);
+                return 0;
+            });
+        }
+
+        [Fact]
+        public void AllErrorTest()
+        {
+            var value1 = 123;
+            var message2 = "Message2";
+            var errorCode2 = 555;
+            var message3 = "Message3";
+            var resultFuncs = new Func<IOperationResult<int>>[]
+            {
+                () => OperationResult.Success<int>(value1),
+                () => OperationResult.Error<int>(errorCode2, message2),
+                () => OperationResult.Error<int>(message3),
+            };
+
+            var res = resultFuncs.All();
+
+            res.Match(_ =>
+            {
+                Assert.False(true);
+                return 0;
+            }, (code, error) =>
+            {
+                Assert.Equal(errorCode2, code);
+                Assert.Equal(message2, error);
+                return 0;
+            }, _ =>
+            {
+                Assert.False(true);
+                return 0;
+            });
+        }
     }
 }

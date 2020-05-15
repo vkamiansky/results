@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Fls.Results
 {
@@ -84,6 +86,7 @@ namespace Fls.Results
             public ErrorResult(string message, int? code = null)
             {
                 Message = message;
+                Code = code;
             }
 
             /// <summary>
@@ -229,7 +232,9 @@ namespace Fls.Results
         {
             return source.Match(
                 value => bind(value),
-                (_, error) => Error<TOut>(error),
+                (code, error) => code.HasValue
+                ? Error<TOut>(code.Value, error)
+                : Error<TOut>(error),
                 exception => Failure<TOut>(exception)
             );
         }
@@ -247,7 +252,10 @@ namespace Fls.Results
         {
             return await source.MatchAsync(
                 async value => await bindAsync(value),
-                (_, error) => Task.FromResult(Error<TOut>(error)),
+                (code, error) => Task.FromResult(
+                    code.HasValue
+                    ? Error<TOut>(code.Value, error)
+                    : Error<TOut>(error)),
                 exception => Task.FromResult(Failure<TOut>(exception))
             );
         }
@@ -413,6 +421,64 @@ namespace Fls.Results
         public static IOperationResult<T> ToResult<T>(this T source)
         {
             return Success(source);
+        }
+
+        /// <summary>
+        /// Returns the new operation result using the <c>returnResult</c> function if the source operation result doesn't match as a success.
+        /// Otherwise the operation result is passed on unchanged.
+        /// </summary>
+        /// <param name="source">The operation result to be matched.</param>
+        /// <param name="returnResult">The function used as an alternative way of getting a success if the source result doesn't match as one.</param>
+        /// <typeparam name="T">The type of the expected result value.</typeparam>
+        /// <returns>A new operation result calculated based on the matching of the source result.</returns>
+        public static IOperationResult<T> IfError<T>(this IOperationResult<T> source, Func<IOperationResult<T>> returnResult)
+        {
+            return source.Match(
+                _ => source,
+                (_, __) => returnResult(),
+                failure => returnResult()
+            );
+        }
+
+        /// <summary>
+        /// Returns the new operation result using the <c>returnResult</c> function if the source operation result produced by the given task doesn't match as a success.
+        /// Otherwise the operation result is passed on as a task result.
+        /// </summary>
+        /// <param name="source">The task producing the operation result to be processed.</param>
+        /// <param name="returnResult">The function used as an alternative way of getting a success if the source result doesn't match as one.</param>
+        /// <typeparam name="T">The type of the expected result value.</typeparam>
+        /// <returns>A task producing a new operation result based on the matching of the source result.</returns>
+        public static async Task<IOperationResult<T>> IfErrorAsync<T>(this Task<IOperationResult<T>> source, Func<IOperationResult<T>> returnResult)
+        {
+            return (await source).IfError(returnResult);
+        }
+
+        /// <summary>
+        /// Produces a success result if all functions in the source sequence yield successful results.
+        /// Otherwise returns the first unsuccessful result it encounters with the appropriate result type.
+        /// </summary>
+        /// <param name="source">A sequence of result-producing functions.</param>
+        /// <typeparam name="T">The type of expected values of the results produced by the functions in the source sequence.</typeparam>
+        /// <returns>A new array-typed operation result calculated based on matching the results produced by the source sequence.</returns>
+        public static IOperationResult<T[]> All<T>(this IEnumerable<Func<IOperationResult<T>>> source)
+        {
+            return source.Aggregate(new List<T>().ToResult(), (a, f) => a.Bind(aList => f().Bind(newRes =>
+            {
+                aList.Add(newRes);
+                return aList.ToResult();
+            }))).Bind(x => x.ToArray().ToResult());
+        }
+
+        /// <summary>
+        /// Produces a success result if any function in the source sequence yields a successful result.
+        /// Otherwise returns the last unsuccessful result it encounters.
+        /// </summary>
+        /// <param name="source">A sequence of result-producing functions.</param>
+        /// <typeparam name="T">The type of expected result value.</typeparam>
+        /// <returns>A new operation result calculated based on matching the results produced by the source sequence.</returns>
+        public static IOperationResult<T> Any<T>(this IEnumerable<Func<IOperationResult<T>>> source)
+        {
+            return source.Aggregate(Error<T>(""), (a, f) => a.IfError(f));
         }
 
         /// <summary>
