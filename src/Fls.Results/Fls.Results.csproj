@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
     <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <IncludeSource>true</IncludeSource>
     <PackageId>Fls.Results</PackageId>
     <Title>Fls.Results</Title>
