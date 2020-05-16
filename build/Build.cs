@@ -99,7 +99,7 @@ class Build : NukeBuild
             DotNetNuGetPush(s => s
                 .SetApiKey(NugetKey)
                 .SetSource("https://api.nuget.org/v3/index.json")
-                .SetTargetPath(OutputDirectory));
+                .SetTargetPath(OutputDirectory / "Fls.Results." + GitVersion.AssemblySemVer + ".nupkg"));
         });
 
     Target CompleteWorkflow => _ => _
