@@ -55,7 +55,6 @@ class Build : NukeBuild
 
     Target Compile => _ => _
         .DependsOn(Restore)
-        .Executes(() => Console.WriteLine("Nuget key length is:" + NugetKey.Length))
         .Executes(() =>
         {
             DotNetBuild(s => s
@@ -93,8 +92,6 @@ class Build : NukeBuild
     Target Publish => _ => _
         .DependsOn(Pack)
         .OnlyWhenDynamic(() => !string.IsNullOrWhiteSpace(NugetKey),
-                         () => NugetKey.StartsWith("oy2m"),
-                         () => NugetKey.Length == 46,
                          () => IsLocalBuild || AppVeyor.Instance.RepositoryTag,
                          () => IsLocalBuild || (AppVeyor.Instance != null && AppVeyor.Instance.RepositoryBranch == "master"),
                          () => IsLocalBuild || (AppVeyor.Instance != null && !string.IsNullOrWhiteSpace(AppVeyor.Instance.RepositoryTagName)))
