@@ -8,4 +8,4 @@ before_build:
 - chmod +x ./build.sh
 
 build_script:
-- ./build.sh --target complete-workflow --nuget-key $env:NUGET_KEY
+- ./build.sh --target complete-workflow --nuget-key '$env:NUGET_KEY'
