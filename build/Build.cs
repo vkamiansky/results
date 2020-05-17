@@ -55,6 +55,7 @@ class Build : NukeBuild
 
     Target Compile => _ => _
         .DependsOn(Restore)
+        .Executes(() => Console.WriteLine("Nuget key length is:" + NugetKey.Length))
         .Executes(() =>
         {
             DotNetBuild(s => s
