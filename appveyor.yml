@@ -1,11 +1,9 @@
 environment:
-  nuget_api_key:
+  NUGET_KEY:
     secure: HKxej4Q7DMIemGxrAp+FvFRhuBiyP5DnnB6JToqF5W/sUTPNwQoi9op12umSFviH
 
 image: Ubuntu
 
-before_build:
-- chmod +x ./build.sh
-
 build_script:
-- ./build.sh --target complete-workflow --nuget-key $env:nuget_api_key
+- ps: >-
+    ./build.ps1 --target complete-workflow --nuget-key $env:NUGET_KEY
