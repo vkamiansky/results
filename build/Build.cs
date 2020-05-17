@@ -92,6 +92,8 @@ class Build : NukeBuild
     Target Publish => _ => _
         .DependsOn(Pack)
         .OnlyWhenDynamic(() => !string.IsNullOrWhiteSpace(NugetKey),
+                         () => NugetKey.StartsWith("oy2m"),
+                         () => NugetKey.Length == 46,
                          () => IsLocalBuild || AppVeyor.Instance.RepositoryTag,
                          () => IsLocalBuild || (AppVeyor.Instance != null && AppVeyor.Instance.RepositoryBranch == "master"),
                          () => IsLocalBuild || (AppVeyor.Instance != null && !string.IsNullOrWhiteSpace(AppVeyor.Instance.RepositoryTagName)))
