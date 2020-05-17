@@ -1,6 +1,6 @@
 environment:
   NUGET_KEY:
-    secure: yTJOXDOWg52hjjJFxtJNqq0uRfi8pHiC2ilKFXsJoDT6XjM13bRgvSyYaf4z9wJe
+    secure: HKxej4Q7DMIemGxrAp+FvFRhuBiyP5DnnB6JToqF5W/sUTPNwQoi9op12umSFviH
 
 image: Ubuntu
 
