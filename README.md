@@ -1,6 +1,6 @@
 # Results
 
-[![Build status](https://ci.appveyor.com/api/projects/status/ol33akfttn7sl176?svg=true)](https://ci.appveyor.com/project/vkamiansky/results)
+[![Build status](https://ci.appveyor.com/api/projects/status/ol33akfttn7sl176?svg=true)](https://ci.appveyor.com/project/vkamiansky/results) [![Latest Nuget version](https://img.shields.io/nuget/v/results.svg)](https://www.nuget.org/packages/results)
 
 ## Description
 A C# framework for building railroad-oriented code with results.
