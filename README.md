@@ -40,21 +40,21 @@ public class ApiResponse<T>
 ...
 ```c#
 // A success result with a value of our response type.
-IOperationResult<ApiResponse<int>> success = OperationResult.Success(new ApiResponse<int>() { OriginalString = "2", ParsedObject = 2 });
+OperationResult<ApiResponse<int>> success = new ApiResponse<int>() { OriginalString = "2", ParsedObject = 2 };
 // An error result with a custom error code of 323 and an error message.
-IOperationResult<ApiResponse<int>> error = OperationResult.Error<ApiResponse<int>>(323, "Wrong input from user.");
+OperationResult<ApiResponse<int>> error = new Error("Wrong input from user.", 323);
 // A system failure result with the associated exception.
-IOperationResult<ApiResponse<int>> failure = OperationResult.Failure<ApiResponse<int>>(new InvalidOperationException());
+OperationResult<ApiResponse<int>> failure = new InvalidOperationException();
 ```
 
 4) `Bind` results of one type to another. Convert `T` into a successful `IOperationResult<T>` using `.ToResult()`.
 
 ```c#
-public static IOperationResult<int> Divide(int x, int y)
+public static OperationResult<int> Divide(int x, int y)
 {
-    return y == 0
-    ? OperationResult.Error<int>(1, "Can't divide by zero.")
-    : OperationResult.Success(x / y);
+    if (y == 0)
+        return new Error("Can't divide by zero.", 1);
+    return x / y;
 }
 ```
 ...
