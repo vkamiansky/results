@@ -13,8 +13,8 @@ namespace Fls.Results.Test
             var testValue = 2;
             var returnResult = OperationResult.Success(testValue);
 
-            Assert.IsType<OperationResult.SuccessResult<int>>(returnResult);
-            Assert.Equal(testValue, (returnResult as OperationResult.SuccessResult<int>).Value);
+            Assert.IsType<SuccessResult<int>>(returnResult);
+            Assert.Equal(testValue, (returnResult as SuccessResult<int>).Value);
         }
 
         [Fact]
@@ -48,8 +48,8 @@ namespace Fls.Results.Test
             sourceMock.Verify(x =>
                 x.Match(
                     It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResult),
-                    It.Is<Func<int?, string, IOperationResult<int>>>(y => (y(null, testError) as OperationResult.ErrorResult<int>).Message == testError),
-                    It.Is<Func<Exception, IOperationResult<int>>>(y => (y(testException) as OperationResult.FailureResult<int>).Exception == testException)
+                    It.Is<Func<int?, string, IOperationResult<int>>>(y => (y(null, testError) as ErrorResult<int>).Message == testError),
+                    It.Is<Func<Exception, IOperationResult<int>>>(y => (y(testException) as FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
             Assert.Equal(expectedResult, actualResult);
@@ -160,8 +160,8 @@ namespace Fls.Results.Test
             sourceMock.Verify(x =>
                 x.MatchAsync(
                     It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResult),
-                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => (y(null, testError).Result as OperationResult.ErrorResult<int>).Message == testError),
-                    It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as OperationResult.FailureResult<int>).Exception == testException)
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => (y(null, testError).Result as ErrorResult<int>).Message == testError),
+                    It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
             Assert.Equal(expectedResult, actualResult);
@@ -198,8 +198,8 @@ namespace Fls.Results.Test
             sourceMock.Verify(x =>
                 x.MatchAsync(
                     It.Is<Func<int, Task<IOperationResult<int>>>>(y => y(default(int)).Result == expectedResult),
-                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => (y(null, testError).Result as OperationResult.ErrorResult<int>).Message == testError),
-                    It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as OperationResult.FailureResult<int>).Exception == testException)
+                    It.Is<Func<int?, string, Task<IOperationResult<int>>>>(y => (y(null, testError).Result as ErrorResult<int>).Message == testError),
+                    It.Is<Func<Exception, Task<IOperationResult<int>>>>(y => (y(testException).Result as FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
             Assert.Equal(expectedResult, actualResult);
@@ -236,8 +236,8 @@ namespace Fls.Results.Test
             sourceMock.Verify(x =>
                 x.Match(
                     It.Is<Func<int, IOperationResult<int>>>(y => y(default(int)) == expectedResult),
-                    It.Is<Func<int?, string, IOperationResult<int>>>(y => (y(null, testError) as OperationResult.ErrorResult<int>).Message == testError),
-                    It.Is<Func<Exception, IOperationResult<int>>>(y => (y(testException) as OperationResult.FailureResult<int>).Exception == testException)
+                    It.Is<Func<int?, string, IOperationResult<int>>>(y => (y(null, testError) as ErrorResult<int>).Message == testError),
+                    It.Is<Func<Exception, IOperationResult<int>>>(y => (y(testException) as FailureResult<int>).Exception == testException)
                 ), Times.Once);
 
             Assert.Equal(expectedResult, actualResult);
@@ -478,13 +478,13 @@ namespace Fls.Results.Test
             // If operation succeeded
             var testValue = default(int);
             var returnResult = OperationResult.Try(() => testValue);
-            Assert.IsType<OperationResult.SuccessResult<int>>(returnResult);
-            Assert.Equal(testValue, (returnResult as OperationResult.SuccessResult<int>).Value);
+            Assert.IsType<SuccessResult<int>>(returnResult);
+            Assert.Equal(testValue, (returnResult as SuccessResult<int>).Value);
 
             // If operation fails
             var testException = default(Exception);
             var returnException = OperationResult.Try<int>(() => { throw testException; });
-            Assert.IsType<OperationResult.FailureResult<int>>(returnException);
+            Assert.IsType<FailureResult<int>>(returnException);
         }
 
         [Fact]
@@ -493,13 +493,13 @@ namespace Fls.Results.Test
             // If operation succeeded
             var testValue = default(int);
             var returnResult = await OperationResult.TryAsync(() => Task.FromResult(testValue));
-            Assert.IsType<OperationResult.SuccessResult<int>>(returnResult);
-            Assert.Equal(testValue, (returnResult as OperationResult.SuccessResult<int>).Value);
+            Assert.IsType<SuccessResult<int>>(returnResult);
+            Assert.Equal(testValue, (returnResult as SuccessResult<int>).Value);
 
             // If operation fails
             var testException = default(Exception);
             var returnException = await OperationResult.TryAsync<int>(() => { throw testException; });
-            Assert.IsType<OperationResult.FailureResult<int>>(returnException);
+            Assert.IsType<FailureResult<int>>(returnException);
         }
 
         [Fact]
